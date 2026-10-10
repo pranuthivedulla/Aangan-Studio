@@ -230,6 +230,13 @@ export const OPEN_DECISIONS: readonly OpenDecision[] = [
     ruling: 'Ruled 10 Oct 2026. Without advice_only the D26 ruling was unimplementable and five partial-home fixtures unreachable; without the two intents, D22 and finding F2 had nowhere to land. All four are plainly observable in a transcript, so the model is the right place for them. Declared deviation from brief section 5.1.',
     blocks: null,
   },
+  {
+    id: 'D30',
+    question: 'services.md caps commercial work at "up to approximately 3,000 sq ft". What happens at 3,500 — decline, or review?',
+    currentDefault: 'Neither. It stays scope_class commercial and is flagged, because "approximately" makes a hard cut wrong and nothing documents where the real line is.',
+    status: 'open',
+    blocks: null,
+  },
 ] as const;
 
 export function decisionById(id: string): OpenDecision {
