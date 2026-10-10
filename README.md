@@ -47,6 +47,7 @@ with the safe default the code runs today. Nothing was silently chosen.
 | 2 | Qualification engine, run against all 20 phone calls | Done — `RESULTS-20-CALLS.md` |
 | 3 | Assignment, slots, working-minute clock, escalation | Done |
 | 4 | HubSpot handoff, Telegram/Resend alerts, field permissions, privacy | Done |
+| 4b | Deployable web shell: results page, health endpoint, webhook URLs | Done |
 | 5 | Vaani call flow, simulated-call harness | Not started |
 | 6 | Dashboard, funnel metrics, cost reporting | Not started |
 | 7 | Real integrations, one at a time, behind flags | Not started |
@@ -56,8 +57,16 @@ with the safe default the code runs today. Nothing was silently chosen.
 
 Nothing has taken a real call. No integration has ever been contacted — every
 adapter is a mock, and asking for a real one throws rather than running a stub.
-There is no deployment: Next.js was deliberately deferred to Phase 5, so there
-are no pages or API routes yet.
+
+**The deployed site** shows the real decision engine run over the 20 September
+calls, a health endpoint reporting which adapters are mocks, and the webhook
+URLs Vaani and the others will eventually call — which return 501 and read
+nothing, deliberately. No caller words appear on any page: the repository is
+public, so the results page is treated as an outbound surface and
+`tests/acceptance/T22-public-page-leaks-nothing.test.ts` asserts no quote,
+sentence, name, locality, phone number or price figure can reach it.
+
+Run it locally with `npm run dev` (port 3100).
 
 ## Run it
 

@@ -27,6 +27,12 @@ export interface ScopeDef {
   readonly routing: 'decline' | 'review' | 'bookable';
   /** Open decision this class is waiting on, if any. */
   readonly pendingDecision?: string;
+  /**
+   * One readable sentence for a declining class. `basis` is a citation and
+   * reads badly when truncated; this is what a front-desk reader, and the
+   * public results page, actually sees.
+   */
+  readonly declineLine?: string;
 }
 
 export const SCOPE_CLASSES: readonly ScopeDef[] = [
@@ -78,6 +84,8 @@ export const SCOPE_CLASSES: readonly ScopeDef[] = [
       'engagement is a room redesign with execution." Ruled 10 Oct 2026 (D26) to decline ' +
       'as an out-of-service class, independently of the gate threshold.',
     routing: 'decline',
+    declineLine:
+      'advice only — the studio’s minimum engagement is a room redesign with execution',
   },
   {
     id: 'out_of_service',
@@ -86,6 +94,8 @@ export const SCOPE_CLASSES: readonly ScopeDef[] = [
       'standalone furniture sourcing, standalone Vastu, restaurants, hotels, retail, ' +
       'gyms, and anywhere outside Pune/PCMC.',
     routing: 'decline',
+    declineLine:
+      'outside what the studio takes on — either the place, or the kind of work (services.md)',
   },
   {
     id: 'unclear',

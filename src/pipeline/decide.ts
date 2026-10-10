@@ -124,10 +124,11 @@ export function decide(input: DecideInput): DecideResult {
   // 4. Out of scope by services.md. Declines whatever the criteria say, which
   //    is what keeps Nashik and the restaurant declining under D24's threshold.
   if (declinesOnScope(score.scopeClass)) {
+    const scope = scopeById(score.scopeClass);
     return result(
       'scope_declines',
       'decline',
-      `${score.scopeClass}: ${scopeById(score.scopeClass).basis.slice(0, 80)}`,
+      scope.declineLine ?? `${score.scopeClass.replace(/_/g, ' ')} is out of scope`,
     );
   }
 

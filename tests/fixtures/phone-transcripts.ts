@@ -11,13 +11,13 @@
  * asserts the engine REFUSES to decide rather than encoding my guess.
  */
 
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import type { Outcome, ScopeClass } from '@/types';
 
-const TRANSCRIPT_FILE = fileURLToPath(
-  new URL('../../context/enquiries/enquiries-extracted.txt', import.meta.url),
-);
+export {
+  loadPhoneTranscripts,
+  transcriptFor,
+  type ParsedTranscript,
+} from '@/demo/transcripts';
 
 export interface PhoneFixture {
   readonly id: string;
@@ -77,60 +77,3 @@ export const PHONE_FIXTURES: readonly PhoneFixture[] = [
   { id: 'T20', expected: 'book', expectedScope: 'full_home', why: 'all five pass; both owners attending' },
 ] as const;
 
-export interface ParsedTranscript {
-  readonly id: string;
-  readonly header: string;
-  readonly body: string;
-}
-
-/**
- * Split the extracted text into T-records. The PDF extraction mangles the
- * separator character between header fields, so the header is matched on the
- * record id alone and everything up to the next id is the body.
- */
-export function loadPhoneTranscripts(): Map<string, ParsedTranscript> {
-  const raw = readFileSync(TRANSCRIPT_FILE, 'utf8');
-  const lines = raw.split(/\r?\n/);
-
-  const out = new Map<string, ParsedTranscript>();
-  let current: { id: string; header: string; body: string[] } | null = null;
-
-  const flush = (): void => {
-    if (!current) return;
-    out.set(current.id, {
-      id: current.id,
-      header: current.header,
-      body: current.body.join('\n').trim(),
-    });
-    current = null;
-  };
-
-  for (const rawLine of lines) {
-    // pdftotext prefixes the first line of each PDF page with a form feed, so
-    // "\fT12 — Phone — ..." and "\fSECTION 2 — WHATSAPP" do not match a
-    // start-anchored pattern. Stripping it is what makes T12 parse at all, and
-    // what stops the WhatsApp section bleeding into T20.
-    const line = rawLine.replace(/^[\f\u000b\s]+/, '');
-    const startsRecord = /^(T\d{2})\s/.exec(line);
-    const startsOtherSection = /^(SECTION|W\d{2}\s|F\d{2}\s)/.test(line);
-    if (startsRecord?.[1]) {
-      flush();
-      current = { id: startsRecord[1], header: line.trim(), body: [] };
-      continue;
-    }
-    if (startsOtherSection) {
-      flush();
-      continue;
-    }
-    if (current) current.body.push(line);
-  }
-  flush();
-
-  return out;
-}
-
-export function transcriptFor(id: string): ParsedTranscript {
-  const found = loadPhoneTranscripts().get(id);
-  if (!found) throw new Error(`No transcript parsed for ${id}`);
-  return found;
-}

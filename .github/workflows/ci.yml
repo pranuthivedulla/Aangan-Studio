@@ -18,6 +18,12 @@ jobs:
 
       - run: npm ci
 
+      # The embedded transcript module is derived from the committed
+      # extraction. Drift here would silently change what counts as a
+      # caller's words, so CI regenerates and compares.
+      - name: Generated files are up to date
+        run: node scripts/generate-transcripts.mjs --check
+
       - name: Typecheck
         run: npm run typecheck
 
@@ -29,6 +35,11 @@ jobs:
       # here rather than in front of a caller (acceptance test T19).
       - name: Test
         run: npm run test
+        env:
+          ADAPTER_MODE: mock
+
+      - name: Build
+        run: npm run build
         env:
           ADAPTER_MODE: mock
 

@@ -28,8 +28,8 @@ spoke it. Downgrades: 0.
 |---|---|---|---|---|---|---|---|---|---|
 | T01 | pass | pass | pass | pass | pass | full_home | **book** | all gate criteria pass | — |
 | T02 | pass | pass | pass | pass | ? | full_home | **book (borderline)** | forwarding with 1 unclear criterion (bias toward forwarding) | — |
-| T03 | pass | FAIL | ? | pass | ? | out_of_service | **decline** | out_of_service: services.md "What we don't do" and "Service area": architecture/structural, stan | — |
-| T04 | FAIL | ? | ? | pass | ? | advice_only | **decline** | advice_only: services.md "What we don't do": "Decor and styling only: if you want someone to  | — |
+| T03 | pass | FAIL | ? | pass | ? | out_of_service | **decline** | outside what the studio takes on — either the place, or the kind of work (services.md) | — |
+| T04 | FAIL | ? | ? | pass | ? | advice_only | **decline** | advice only — the studio’s minimum engagement is a room redesign with execution | — |
 | T05 | pass | pass | pass | pass | ? | full_home | **book (borderline)** | forwarding with 1 unclear criterion (bias toward forwarding) | — |
 | T06 | pass | pass | pass | pass | pass | commercial | **book** | all gate criteria pass | — |
 | T07 | pass | ? | FAIL | pass | ? | partial | **review** | timeline failed; below the decline threshold, so the front desk decides | — |
@@ -44,7 +44,7 @@ spoke it. Downgrades: 0.
 | T16 | ? | pass | ? | pass | ? | unclear | **review** | caller's earlier enquiry went unanswered; front desk calls back today | — |
 | T17 | pass | pass | pass | pass | ? | full_home | **book (borderline)** | forwarding with 1 unclear criterion (bias toward forwarding) | — |
 | T18 | pass | ? | ? | pass | pass | commercial | **ask_one** | unclear on service_area; asking one question | D2 |
-| T19 | pass | pass | ? | pass | ? | out_of_service | **decline** | out_of_service: services.md "What we don't do" and "Service area": architecture/structural, stan | — |
+| T19 | pass | pass | ? | pass | ? | out_of_service | **decline** | outside what the studio takes on — either the place, or the kind of work (services.md) | — |
 | T20 | pass | pass | pass | pass | pass | full_home | **book** | all gate criteria pass | — |
 
 ## Where a decision is still needed

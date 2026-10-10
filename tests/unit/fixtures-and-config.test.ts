@@ -217,3 +217,15 @@ describe('open decisions', () => {
     expect(decisionById('D26').status).toBe('ruled');
   });
 });
+
+describe('a declining scope explains itself in a sentence', () => {
+  it('every declining class has a readable line, not a truncated citation', () => {
+    // The rationale reaches the front-desk queue AND the public results page,
+    // where "architecture/structural, stan" read as a bug.
+    for (const scope of SCOPE_CLASSES.filter((s) => s.routing === 'decline')) {
+      expect(scope.declineLine, scope.id).toBeTruthy();
+      expect(scope.declineLine?.length ?? 0, scope.id).toBeGreaterThan(25);
+      expect(scope.declineLine?.endsWith('stan'), scope.id).toBe(false);
+    }
+  });
+});
