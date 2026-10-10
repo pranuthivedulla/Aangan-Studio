@@ -237,6 +237,13 @@ export const OPEN_DECISIONS: readonly OpenDecision[] = [
     status: 'open',
     blocks: null,
   },
+  {
+    id: 'D31',
+    question: 'Brief section 5.5 makes priority a function of timeline urgency and source, and neither is observable in the current data model. How should the agent record them?',
+    currentDefault: 'Neither is used. Their weights exist in config/priority.ts and are deliberately unread, and prioritise() reports them as unavailable rather than inferring them from transcript keywords.',
+    status: 'open',
+    blocks: 'Phase 6 - the dashboard cannot show conversion by source until source exists',
+  },
 ] as const;
 
 export function decisionById(id: string): OpenDecision {

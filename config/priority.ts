@@ -39,15 +39,35 @@ export const PRIORITY_WEIGHTS: PriorityWeights = {
   frontDeskQualifiedPenalty: 0,
 };
 
-export const PRIORITY_BANDS = {
-  high: 7,
-  medium: 4,
+/**
+ * Bands are a share of what is currently ACHIEVABLE, not fixed numbers.
+ *
+ * Fixed thresholds were wrong and a test caught it: with two of the brief's
+ * four inputs unavailable (D31), the best a lead could score was 6 against a
+ * "high" threshold of 7, so the top band was unreachable and every lead was
+ * medium or low. Expressing the bands as a proportion means they stay
+ * meaningful today and re-calibrate themselves the moment urgency and source
+ * become available.
+ */
+export const PRIORITY_BAND_SHARES = {
+  high: 0.7,
+  medium: 0.4,
 } as const;
 
 export type PriorityBand = 'high' | 'medium' | 'low';
 
-export function bandFor(score: number): PriorityBand {
-  if (score >= PRIORITY_BANDS.high) return 'high';
-  if (score >= PRIORITY_BANDS.medium) return 'medium';
+/** The most a lead can score with the inputs that exist today. */
+export function maxAchievableScore(): number {
+  const w = PRIORITY_WEIGHTS;
+  // Largest scope size (doubled) plus a confirmed decision maker. Urgency and
+  // source are excluded deliberately: see D31.
+  return w.scopeSize * 2 + w.decisionMakerPresent;
+}
+
+export function bandFor(score: number, max = maxAchievableScore()): PriorityBand {
+  if (max <= 0) return 'low';
+  const share = score / max;
+  if (share >= PRIORITY_BAND_SHARES.high) return 'high';
+  if (share >= PRIORITY_BAND_SHARES.medium) return 'medium';
   return 'low';
 }
