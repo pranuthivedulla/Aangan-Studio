@@ -33,7 +33,21 @@ const root = join(here, '..');
 const SOURCE = join(root, 'context', 'enquiries', 'enquiries-extracted.txt');
 const TARGET = join(root, 'src', 'demo', 'transcripts.generated.ts');
 
+/**
+ * Line endings are normalised to LF before embedding.
+ *
+ * Without this the script is not reproducible across platforms: a Windows
+ * working copy holds CRLF, git stores LF, so Linux CI regenerated a different
+ * module and --check failed on a file nobody had touched. The embedded text is
+ * compared against transcripts character by character to decide whether a
+ * caller really said something, so it has to be the same text everywhere.
+ */
+export function normalise(text) {
+  return text.replace(/\r\n/g, '\n');
+}
+
 export function buildModule(rawText) {
+  rawText = normalise(rawText);
   const header = [
     '/**',
     ' * GENERATED FILE — do not edit.',

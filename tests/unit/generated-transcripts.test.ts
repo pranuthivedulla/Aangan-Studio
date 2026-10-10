@@ -11,7 +11,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { buildModule } from '../../scripts/generate-transcripts.mjs';
+import { buildModule, normalise } from '../../scripts/generate-transcripts.mjs';
 import { ENQUIRY_DOCUMENT_TEXT } from '@/demo/transcripts.generated';
 import { loadPhoneTranscripts } from '@/demo/transcripts';
 
@@ -24,8 +24,15 @@ describe('the generated transcript module', () => {
     expect(generated, 'run: node scripts/generate-transcripts.mjs').toBe(buildModule(source));
   });
 
-  it('round-trips the source text exactly, byte for byte', () => {
-    expect(ENQUIRY_DOCUMENT_TEXT).toBe(source);
+  it('round-trips the source text exactly, once line endings are normalised', () => {
+    // Normalised rather than raw: a Windows checkout holds CRLF and git stores
+    // LF, so comparing to the raw bytes would pass on one machine and fail on
+    // the other. CI found exactly that.
+    expect(ENQUIRY_DOCUMENT_TEXT).toBe(normalise(source));
+  });
+
+  it('embeds no carriage returns, so the file is identical on every platform', () => {
+    expect(ENQUIRY_DOCUMENT_TEXT).not.toContain(String.fromCharCode(13));
   });
 
   it('kept the characters the quote matcher depends on', () => {
