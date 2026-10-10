@@ -108,13 +108,28 @@ export function mockLlm(opts: MockLlmOptions = {}): LlmAdapter & { readonly call
 }
 
 export function mockCalendar(seed: {
+  /** Busy blocks per designer. freeBusy returns these; everything else is free. */
   readonly busy?: Readonly<Record<string, readonly Slot[]>>;
-  readonly free?: Readonly<Record<string, readonly Slot[]>>;
   readonly provider?: string;
   /** Simulates the race: the slot is taken between freeBusy and insert. */
   readonly stealSlotOnInsert?: boolean;
-} = {}): CalendarAdapter & { readonly events: { eventId: string; slot: Slot }[] } {
-  const events: { eventId: string; slot: Slot }[] = [];
+} = {}): CalendarAdapter & {
+  readonly events: {
+    eventId: string;
+    slot: Slot;
+    summary: string;
+    /** Kept so tests can assert what the CLIENT sees in the invitation. */
+    description: string;
+    clientEmail: string | null;
+  }[];
+} {
+  const events: {
+    eventId: string;
+    slot: Slot;
+    summary: string;
+    description: string;
+    clientEmail: string | null;
+  }[] = [];
   let counter = 0;
   return {
     name: 'calendar',
@@ -122,7 +137,7 @@ export function mockCalendar(seed: {
     provider: seed.provider ?? 'mock-google',
     events,
     async freeBusy(designerId, _fromIso, _toIso) {
-      return seed.free?.[designerId] ?? [];
+      return seed.busy?.[designerId] ?? [];
     },
     async createEvent(args) {
       if (seed.stealSlotOnInsert) return null;
@@ -131,7 +146,13 @@ export function mockCalendar(seed: {
       }
       counter += 1;
       const eventId = `mock-event-${counter}`;
-      events.push({ eventId, slot: args.slot });
+      events.push({
+        eventId,
+        slot: args.slot,
+        summary: args.summary,
+        description: args.description,
+        clientEmail: args.clientEmail,
+      });
       return { eventId };
     },
   };

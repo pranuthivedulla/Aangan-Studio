@@ -108,7 +108,53 @@ export const SettingsSchema = z
       .nullable()
       .default(null),
   })
-  .strict();
+  .strict()
+  .superRefine((v, ctx) => {
+    // C9 from the Phase 1 review. "19:00 to 10:00" validated happily, and
+    // every working-minute calculation in Phase 3 would have been built on a
+    // day of negative length.
+    const toMinutes = (hhmm: string): number => {
+      const [h, m] = hhmm.split(':').map(Number);
+      return (h ?? 0) * 60 + (m ?? 0);
+    };
+    const open = toMinutes(v.WORKING_HOURS_START);
+    const close = toMinutes(v.WORKING_HOURS_END);
+    if (close <= open) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['WORKING_HOURS_END'],
+        message: `must be after WORKING_HOURS_START (${v.WORKING_HOURS_START})`,
+      });
+      return;
+    }
+
+    // C10. An acknowledgement window longer than a working day cannot fire on
+    // the day it starts, which makes "answer within 30 minutes" meaningless.
+    const dayLength = close - open;
+    if (v.ACK_WINDOW_WORKING_MIN > dayLength) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['ACK_WINDOW_WORKING_MIN'],
+        message: `must not exceed one working day (${dayLength} minutes)`,
+      });
+    }
+    if (v.ACK_ESCALATION_2_WORKING_MIN > dayLength) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['ACK_ESCALATION_2_WORKING_MIN'],
+        message: `must not exceed one working day (${dayLength} minutes)`,
+      });
+    }
+
+    // A consultation plus its buffers has to fit inside a working day too.
+    if (v.CONSULTATION_DURATION_MIN + v.SLOT_BUFFER_MIN * 2 > dayLength) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['CONSULTATION_DURATION_MIN'],
+        message: `a consultation plus buffers must fit in a working day (${dayLength} minutes)`,
+      });
+    }
+  });
 
 export type Settings = z.infer<typeof SettingsSchema>;
 

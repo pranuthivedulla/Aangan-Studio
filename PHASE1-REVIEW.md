@@ -263,9 +263,11 @@ Checks after the fixes: `tsc` clean, `eslint` clean, **208 tests pass** (was 132
   still resolves in-area. Phase 2, with the criterion 2 scorer.
 - **C8** settings audit timestamps are still the epoch in the mock store. Needs
   a clock injected; Phase 2.
-- **C9, C10** `WORKING_HOURS_END` may still precede `START`, and the
-  acknowledgement window still accepts 600 working minutes. Phase 3, where the
-  working-minute clock is built and these actually bite.
+- ~~**C9, C10**~~ **FIXED in Phase 3, 10 Oct 2026.** Cross-field validation
+  now rejects a close time at or before the open time, an acknowledgement
+  window or escalation delay longer than a working day, and a consultation
+  plus buffers that cannot fit in one. Six assertions in
+  `tests/acceptance/T13-working-clock.test.ts`.
 - **C11** `enquiries-extracted.txt` is still a hand-generated artefact. Should
   be produced by a committed script.
 - **S2** RLS policies still unwritten; ownership is app-enforced only.
