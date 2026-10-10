@@ -42,17 +42,22 @@ with the safe default the code runs today. Nothing was silently chosen.
 | Phase | What | State |
 |---|---|---|
 | 0 | Read context, assess 40 enquiries, plan | Done — `PHASE0-PLAN.md` |
-| 1 | Repo, types, schemas, state machine, config, mocks, migrations, CI | Done, 132 tests green |
-| 2 | Qualification engine against all 40 transcripts | Not started |
-| 3 | Assignment, slots, working-minute clock, escalation | Not started |
-| 4 | HubSpot handoff, Telegram/Resend, field permissions | Not started |
+| 1 | Repo, types, schemas, state machine, config, mocks, migrations, CI | Done |
+| 1b | Self-review, then fix four of the eleven defects it found | Done — `PHASE1-REVIEW.md` |
+| 2 | Qualification engine, run against all 20 phone calls | Done — `RESULTS-20-CALLS.md` |
+| 3 | Assignment, slots, working-minute clock, escalation | Done |
+| 4 | HubSpot handoff, Telegram/Resend alerts, field permissions, privacy | Done |
 | 5 | Vaani call flow, simulated-call harness | Not started |
-| 6 | Dashboard, funnel, cost | Not started |
+| 6 | Dashboard, funnel metrics, cost reporting | Not started |
 | 7 | Real integrations, one at a time, behind flags | Not started |
-| 8 | Hardening, retries, idempotency, docs | Not started |
+| 8 | Hardening, retries, idempotency, operational docs | Not started |
+
+**468 tests pass.** Typecheck and lint clean. `npm run check` is the gate.
 
 Nothing has taken a real call. No integration has ever been contacted — every
 adapter is a mock, and asking for a real one throws rather than running a stub.
+There is no deployment: Next.js was deliberately deferred to Phase 5, so there
+are no pages or API routes yet.
 
 ## Run it
 
