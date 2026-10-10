@@ -172,9 +172,9 @@ export const OPEN_DECISIONS: readonly OpenDecision[] = [
   {
     id: 'D22',
     question: 'service_failure as its own class: a pre-sale response failure (T16, W08) is neither a project complaint nor a clean new enquiry. Queue, priority, and the never-park rule.',
-    currentDefault: 'Class exists in the type system; front-desk queue, high priority, never parked (setting NEVER_PARK_REPEAT_OR_SERVICE_FAILURE). T16 is pending-ruling.',
-    status: 'blocking',
-    blocks: 'Phase 2 — T16 fixture',
+    currentDefault: 'Implemented: intent service_failure routes to front-desk review, never parked (setting NEVER_PARK_REPEAT_OR_SERVICE_FAILURE), and a repeat caller is reviewed rather than parked however much is unclear. T16 decides cleanly on this default.',
+    status: 'open',
+    blocks: null,
   },
   {
     id: 'D23',

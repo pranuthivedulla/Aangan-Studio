@@ -52,11 +52,14 @@ describe('the 20 phone transcripts parse out of the source file', () => {
   });
 });
 
-describe('pending-ruling fixtures are exactly the four with no defensible answer', () => {
+describe('pending-ruling fixtures are exactly those with no defensible answer', () => {
   const pending = PHONE_FIXTURES.filter((f) => f.expected === 'pending-ruling');
 
-  it('there are four of them', () => {
-    expect(pending.map((f) => f.id)).toEqual(['T10', 'T14', 'T16', 'T18']);
+  it('there are three of them', () => {
+    // T16 left this list on 10 Oct 2026: D22's never-park default is now
+    // implemented, so the repeat caller decides cleanly instead of waiting on
+    // a ruling.
+    expect(pending.map((f) => f.id)).toEqual(['T10', 'T14', 'T18']);
   });
 
   it('each names an open decision that exists and is blocking', () => {
@@ -203,7 +206,6 @@ describe('open decisions', () => {
       'D2',
       'D20',
       'D21',
-      'D22',
       'D27',
     ]);
   });

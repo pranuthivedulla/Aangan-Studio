@@ -188,6 +188,16 @@ export function score(extraction: Extraction, transcript: string): ScoreResult {
     return modelScore;
   });
 
+  // D21: the caller is not the decider, but named someone who is. That is
+  // exactly T14's shape -- a son calling for parents who will attend and
+  // decide. qualified.md calls it insufficient AND says to forward it, so the
+  // front desk is told the question is open rather than being handed a bare
+  // "unclear".
+  const dm = scores.find((s) => s.criterionId === 'decision_maker');
+  if (dm?.result === 'unclear' && extraction.fields.decision_maker !== null) {
+    blockedBy.add('D21');
+  }
+
   return {
     scores,
     scopeClass: refined.scopeClass,
