@@ -244,6 +244,13 @@ export const OPEN_DECISIONS: readonly OpenDecision[] = [
     status: 'open',
     blocks: 'Phase 6 - the dashboard cannot show conversion by source until source exists',
   },
+  {
+    id: 'D32',
+    question: "Section 5.6 says the handoff note contains no price figures. May it state a budget the CALLER volunteered, in the caller's own words? T10 said '1 to 1.5 lakh maximum', which is material to whoever meets them.",
+    currentDefault: 'Excluded. The note carries no figure at all, per the brief as written, so a designer currently learns a volunteered budget only by opening the transcript.',
+    status: 'open',
+    blocks: null,
+  },
 ] as const;
 
 export function decisionById(id: string): OpenDecision {

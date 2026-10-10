@@ -66,3 +66,47 @@ export function containsNoPriceLanguage(text: string): PriceLanguageVerdict {
   }
   return { ok: true };
 }
+
+/**
+ * The second, looser check — and the distinction matters.
+ *
+ * `containsNoPriceLanguage` above bans every digit, which is right for the
+ * one sentence the agent SPEAKS about price: it needs no number, so a number
+ * is a bug. Applying the same rule everywhere was wrong, and a test caught it
+ * on 10 Oct 2026: the designer's handoff note has to say "3BHK",
+ * "1,400 sq ft" and "done by March". Those are the facts of the project, not
+ * a quote.
+ *
+ * So internal and client-visible prose is checked for price FIGURES instead:
+ * currency amounts, lakh and crore figures, per-sq-ft rates, rate language,
+ * and a bare number sitting next to a cost word. A plain area or a month
+ * passes, which is what makes the note usable.
+ */
+export function containsNoPriceFigure(text: string): PriceLanguageVerdict {
+  if (CURRENCY.test(text)) {
+    return { ok: false, reason: 'must contain no currency amount or rupee reference' };
+  }
+
+  const figurePatterns: readonly [RegExp, string][] = [
+    [/\d[\d,.]*\s*(lakhs?|crores?)/i, 'a lakh or crore figure'],
+    [/(lakhs?|crores?)\s*\d/i, 'a lakh or crore figure'],
+    [/\d[\d,.]*\s*(\/|per)\s*(sq\.?\s*ft|square\s*(foot|feet))/i, 'a per-square-foot rate'],
+    [/(per\s*sq\.?\s*ft|per\s*square\s*(foot|feet))[^.]{0,12}\d/i, 'a per-square-foot rate'],
+    [
+      /(cost|price|priced|rate|charge|charges|budget|quote|quotation|estimate)[^.]{0,20}\d/i,
+      'a number next to a cost word',
+    ],
+    [/\d[^.]{0,20}(per\s*sq|a\s*square\s*foot)/i, 'a per-square-foot rate'],
+  ];
+
+  for (const [pattern, label] of figurePatterns) {
+    const hit = pattern.exec(text);
+    if (hit) return { ok: false, reason: `must not contain ${label} ("${hit[0].trim()}")` };
+  }
+
+  const hit = RATE_LANGUAGE.exec(text);
+  if (hit) {
+    return { ok: false, reason: `must not promise or imply a figure ("${hit[0]}")` };
+  }
+  return { ok: true };
+}
