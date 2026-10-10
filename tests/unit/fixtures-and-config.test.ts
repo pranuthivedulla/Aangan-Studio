@@ -200,13 +200,17 @@ describe('open decisions', () => {
     }
   });
 
-  it('the blocking set is the five I cannot proceed past', () => {
+  it('the blocking set is what I cannot proceed past', () => {
     expect(blockingDecisions().map((d) => d.id).sort()).toEqual([
       'D13',
       'D2',
       'D20',
       'D21',
       'D27',
+      // Added 11 Oct 2026: the map shows no login, and the dashboard is a
+      // public URL. Harmless while every figure is case material or empty;
+      // not harmless the moment real calls flow.
+      'D35',
     ]);
   });
 

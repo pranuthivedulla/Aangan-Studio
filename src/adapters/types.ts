@@ -160,6 +160,12 @@ export interface CrmAdapter {
   /** Designer-only. Never goes to Telegram, the front desk or Nikhil (T15). */
   storeHandoffNote(clientId: string, note: string): Promise<void>;
   recordLead(lead: Lead): Promise<{ recordUrl: string }>;
+  /**
+   * Won and lost, as the designer recorded them (map box 22 <- 19).
+   * `won` is designer-entered, so it is null until someone has entered one;
+   * zero would claim we asked and the answer was none.
+   */
+  wonLostCounts(): Promise<{ won: number | null; lost: number | null; pipelinePaise: number | null }>;
 }
 
 // ---------------------------------------------------------------------------
@@ -227,6 +233,8 @@ export interface StoreAdapter {
   recordIdempotencyKey(key: string): Promise<void>;
   saveLead(lead: Lead): Promise<void>;
   loadLeadsByClient(phone: PhoneE164): Promise<readonly Lead[]>;
+  /** Every lead, for the dashboard's funnel and queues (map box 22 <- 23). */
+  allLeads(): Promise<readonly Lead[]>;
   recordCost(callId: string, cost: CallCost): Promise<void>;
   totalCostPaise(): Promise<number>;
 }

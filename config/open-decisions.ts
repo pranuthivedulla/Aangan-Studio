@@ -251,6 +251,37 @@ export const OPEN_DECISIONS: readonly OpenDecision[] = [
     status: 'open',
     blocks: null,
   },
+  {
+    id: 'D33',
+    question:
+      'Box 21 of the components map gives the front desk real work — reviewing declines, parks, narrow scope and complaints — and names no tool for it. Do we build them a view?',
+    currentDefault:
+      'No. Ruled out of scope 11 Oct 2026. The front desk works from the Telegram front-desk chat (brief section 7: one bot, two chats) and the phone, as they do today. Four of the twenty September calls route to them, so this only holds while that Telegram chat exists — without it those leads would be silently dropped, against non-negotiable 7.',
+    status: 'ruled',
+    ruling:
+      'Ruled out of scope by the founder\'s office, 11 Oct 2026. Recorded because the map leaves the front desk a queue with nowhere to work, and the Telegram chat is now load-bearing rather than a convenience: Phase 7 must not treat it as optional.',
+    blocks: null,
+  },
+  {
+    id: 'D34',
+    question:
+      'Should designers log into this app with their own code and see their own leads, with Nikhil able to open each of their views?',
+    currentDefault:
+      'No. The components map is the specification and it is explicit: boxes 16, 18 and 19 put the designer in HubSpot with a Telegram alert, and box D names the one dashboard as "Nikhil\'s dashboard". There is no login anywhere in the map.',
+    status: 'ruled',
+    ruling:
+      'Raised by the founder\'s office on 10 Oct 2026, then withdrawn on 11 Oct 2026: the build is judged against the submitted map, so where the map is explicit we follow it. Recorded because it was a real proposal and the reasoning for dropping it matters — building designer views here would duplicate HubSpot, move caller personal data into a second system, and give the founder a door into individual leads that the map deliberately withholds.',
+    blocks: null,
+  },
+  {
+    id: 'D35',
+    question:
+      'The map shows no login anywhere, yet box 22 is a dashboard of the studio\'s funnel, queues and costs. Who can open it, and how is that enforced?',
+    currentDefault:
+      'Nothing. The deployed site is public, so anyone with the URL can read the dashboard. Acceptable while every figure is either case material or empty; not acceptable once real call data flows.',
+    status: 'blocking',
+    blocks: 'Phase 7 — do not point this at live data while the page is open to anyone',
+  },
 ] as const;
 
 export function decisionById(id: string): OpenDecision {

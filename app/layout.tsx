@@ -52,6 +52,8 @@ const css = `
   .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
   .stat { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
   .label { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .stat.muted { color: var(--muted); font-weight: 400; }
+  .absent { color: var(--muted); font-size: 12px; margin-top: 6px; line-height: 1.45; }
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
   th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
   th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
@@ -83,6 +85,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <main>
           <nav>
             <a href="/">Overview</a>
+            <a href="/dashboard">Nikhil&apos;s dashboard</a>
             <a href="/results">The 20 calls</a>
             <a href="/api/health">Health (JSON)</a>
             <a href="https://github.com/pranuthivedulla/Aangan-Studio">Source</a>

@@ -193,6 +193,10 @@ export function mockCrm(): CrmAdapter & {
       leads.push(lead);
       return { recordUrl: `https://crm.invalid/lead/${lead.id}` };
     },
+    async wonLostCounts() {
+      // Nothing is won or lost until a designer says so in HubSpot (box 19).
+      return { won: null, lost: null, pipelinePaise: null };
+    },
   };
 }
 
@@ -273,6 +277,9 @@ export function mockStore(initial: Partial<Settings> = {}): StoreAdapter {
     },
     async loadLeadsByClient(phone) {
       return [...leads.values()].filter((l) => l.clientId === phone);
+    },
+    async allLeads() {
+      return [...leads.values()];
     },
     async recordCost(callId, cost) {
       costs.set(callId, cost);
