@@ -31,7 +31,12 @@ localities, budget floors, rota, priority, approved phrases, open decisions,
 settings schema), domain types, the Zod extraction contract with evidence
 verification, the lead state machine, all seven adapters with mocks, the
 settings service, pipeline stage types, the Supabase migration, 132 tests, CI.
-`npm run check` is green: typecheck clean, lint clean, 132/132 tests pass.
+`npm run check` is green: typecheck clean, lint clean, **208/208 tests pass**.
+
+**Phase 1 was then self-reviewed and four debts fixed the same day** — see
+`PHASE1-REVIEW.md`, which lists eleven confirmed defects, what was fixed and
+what was knowingly carried forward. Read its Resolution section before assuming
+a protection exists.
 
 **Not built:** every pipeline stage body (Phases 2–4), the Vaani call flow
 (Phase 5), the dashboard (Phase 6), and all seven real adapters (Phase 7).
@@ -67,8 +72,17 @@ Asking for a real adapter throws on purpose — see `src/adapters/index.ts`.
   the one-question rule are possible at all. The voice adapter declares
   `per_turn` or `post_call_only` so the pipeline cannot promise what the
   platform cannot do.
-- **Transcripts are sensitive.** Never log them, never send them outside the
-  approved stack. `no-console` is an error for this reason.
+- **Transcripts are sensitive.** Nothing logs directly — everything goes
+  through `src/logging/`, which redacts by key name before emitting. Adding a
+  field that holds caller speech means adding its name to `SENSITIVE_KEYS`.
+  `no-console` is an eslint error as a second line of defence.
+- **The price guard has two halves and both matter.** `config/price-language.ts`
+  is the single verdict: the settings schema calls it on every write to the
+  spoken sentence, and the acceptance sweep calls it on every committed phrase.
+  The runtime half was missing until 10 Oct 2026, which meant the first rule in
+  the brief could be defeated from the admin page.
+- **Evidence must be CALLER speech, not just present.** A quote the receptionist
+  spoke used to pass. It no longer does.
 - **A separate project is nested in this folder**, at `Desktop/Term 1/
   Arjun_Hiring Application/kargo-shortlist`, with its own `.git` and its own
   `.env.local`. It is git-ignored and eslint-ignored. Do not commit it, and do

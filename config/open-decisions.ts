@@ -214,6 +214,22 @@ export const OPEN_DECISIONS: readonly OpenDecision[] = [
     status: 'blocking',
     blocks: 'Phase 5 — and the whole in-call design if the answer is no',
   },
+  {
+    id: 'D28',
+    question: 'Acceptance test T03 ("every gate fail -> decline") contradicts the D24 ruling that one gate fail goes to front-desk review. Which wins?',
+    currentDefault: 'T03 reworded, per the ruling below. The engine implements the D24 threshold.',
+    status: 'ruled',
+    ruling: 'Ruled 10 Oct 2026: reword T03 to "a lead with any failed criterion never reaches a designer without a human deciding first". The original wording was aimed at stopping bad leads reaching designers, which the review threshold still prevents; only the wording broke.',
+    blocks: null,
+  },
+  {
+    id: 'D29',
+    question: 'The model vocabulary in brief section 5.1 omits scope classes and intents that the 10 Oct rulings depend on. Widen it, or derive the extra classes in code?',
+    currentDefault: 'Widened. The model may now emit partial and advice_only scope classes, and service_failure and price_enquiry intents. commercial_below_min stays derived-only, unreachable until D2.',
+    status: 'ruled',
+    ruling: 'Ruled 10 Oct 2026. Without advice_only the D26 ruling was unimplementable and five partial-home fixtures unreachable; without the two intents, D22 and finding F2 had nowhere to land. All four are plainly observable in a transcript, so the model is the right place for them. Declared deviation from brief section 5.1.',
+    blocks: null,
+  },
 ] as const;
 
 export function decisionById(id: string): OpenDecision {

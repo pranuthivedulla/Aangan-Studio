@@ -99,10 +99,20 @@ export interface CriterionScore {
   readonly reasoning: string;
   readonly result: CriterionResult;
   /**
-   * True when the model supplied a quote that was NOT present in the
-   * transcript and the code downgraded the result (acceptance test T04).
+   * True when the code overrode the model because its evidence did not hold
+   * up (acceptance test T04).
    */
   readonly downgradedForBadEvidence: boolean;
+  /**
+   * Why it was overridden: the quote was not in the transcript, it was in the
+   * transcript but somebody other than the caller said it, or there was no
+   * quote behind a pass or a fail. null when the model was not overridden.
+   */
+  readonly downgradeReason:
+    | 'quote_not_found'
+    | 'quote_not_caller_speech'
+    | 'no_quote_for_decided_result'
+    | null;
 }
 
 export interface Lead {

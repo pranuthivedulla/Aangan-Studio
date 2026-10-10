@@ -127,7 +127,11 @@ describe('T05 invalid model output is rejected, not guessed at', () => {
         { id: 'real_project', evidence_quote: 'redo the whole thing', reasoning: 'r', result: 'pass' },
       ]),
     );
-    const result = parseExtraction('```json\n' + payload + '\n```');
+    // A shape probe, so it opts out of the full-criteria-set requirement —
+    // which is tested on its own in T04b.
+    const result = parseExtraction('```json\n' + payload + '\n```', {
+      requireFullCriteriaSet: false,
+    });
     expect(result.ok).toBe(true);
   });
 

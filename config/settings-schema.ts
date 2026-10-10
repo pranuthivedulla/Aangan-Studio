@@ -9,6 +9,7 @@
  */
 
 import { z } from 'zod';
+import { containsNoPriceLanguage } from './price-language';
 
 const hhmm = z
   .string()
@@ -87,8 +88,25 @@ export const SettingsSchema = z
     /**
      * The approved price sentence. Defaults to config/approved-phrases.ts.
      * Changing it requires Nikhil's sign-off recorded in the audit log.
+     *
+     * Content-checked on write. Before 10 Oct 2026 this was a plain string,
+     * which meant non-negotiable 1 -- the system never quotes a price -- could
+     * be defeated by typing a figure into the admin page, with no deploy and
+     * no code review. The guard below is the fix: a sentence that deflects a
+     * price question needs no number in it, so any digit, currency marker or
+     * rate word is rejected outright.
      */
-    APPROVED_PRICE_SENTENCE: z.string().min(1).nullable().default(null),
+    APPROVED_PRICE_SENTENCE: z
+      .string()
+      .min(1)
+      .superRefine((v, ctx) => {
+        const verdict = containsNoPriceLanguage(v);
+        if (!verdict.ok) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: verdict.reason });
+        }
+      })
+      .nullable()
+      .default(null),
   })
   .strict();
 
