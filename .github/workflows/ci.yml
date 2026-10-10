@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      # No credentials are configured for CI, deliberately. Every adapter
+      # defaults to its mock, so a test that reaches a real integration fails
+      # here rather than in front of a caller (acceptance test T19).
+      - name: Test
+        run: npm run test
+        env:
+          ADAPTER_MODE: mock
+
+      - name: Assert no secrets are configured for this job
+        run: |
+          for v in GEMINI_API_KEY HUBSPOT_PRIVATE_APP_TOKEN TELEGRAM_BOT_TOKEN \
+                   SUPABASE_SERVICE_ROLE_KEY VAANI_API_KEY RESEND_API_KEY; do
+            if [ -n "${!v:-}" ]; then
+              echo "::error::$v is set in CI. The test suite must never have credentials."
+              exit 1
+            fi
+          done
+          echo "No integration credentials present. Good."

@@ -1,0 +1,78 @@
+# Aangan Studio — phone enquiry agent
+
+Answers the studio line when the front desk does not, at any hour. Qualifies the
+enquiry against Nikhil's five criteria, books a designer consultation inside the
+call, and routes everything else to a person. It never quotes a price.
+
+Pune interior design studio, ~200 enquiries a month, a third of them outside
+office hours, nearly half unanswered inside 48 hours. An enquiry answered within
+the hour converts about four times better than one answered the next day. That
+gap is the whole product.
+
+## Status
+
+| Phase | What | State |
+|---|---|---|
+| 0 | Read context, assess 40 enquiries, plan | Done — `PHASE0-PLAN.md` |
+| 1 | Repo, types, schemas, state machine, config, mocks, migrations, CI | Done, 132 tests green |
+| 2 | Qualification engine against all 40 transcripts | Not started |
+| 3 | Assignment, slots, working-minute clock, escalation | Not started |
+| 4 | HubSpot handoff, Telegram/Resend, field permissions | Not started |
+| 5 | Vaani call flow, simulated-call harness | Not started |
+| 6 | Dashboard, funnel, cost | Not started |
+| 7 | Real integrations, one at a time, behind flags | Not started |
+| 8 | Hardening, retries, idempotency, docs | Not started |
+
+Nothing has taken a real call. No integration has ever been contacted — every
+adapter is a mock, and asking for a real one throws rather than running a stub.
+
+## Run it
+
+```bash
+npm install
+npm run check     # typecheck, lint, 132 tests
+```
+
+No credentials, no database, no API keys. That is a requirement, not a
+convenience: acceptance test T19 asserts the whole thing runs without them, and
+CI fails if a credential is present.
+
+## How it is laid out
+
+```
+context/     The business rules. Nikhil's words, not ours.
+config/      Those rules as data: criteria, scope, localities, rota, settings.
+src/types/   The domain. `Enquiry` is channel-agnostic; phone is the only
+             channel built.
+src/schemas/ The contract with Gemini Flash. The model never emits an outcome.
+src/state/   Lead state machine. Illegal transitions throw.
+src/adapters/Seven integrations behind typed interfaces. Mock is the default.
+src/pipeline/Stage signatures. Bodies land in Phases 2–4.
+src/settings/Runtime settings: validated, cached, audited, no deploy to change.
+tests/       Unit tests, plus acceptance tests named for the brief's T01–T29.
+supabase/    Migrations. Not applied anywhere yet.
+```
+
+## The two rules worth knowing before you read any code
+
+**The system never quotes a price.** Not the model, not a template, not the
+handoff note. `context/pricing.md` is read by the test suite only, to prove no
+figure in it ever reaches an outbound surface. When a caller asks, the agent says
+one approved sentence — `pricing.md`'s own wording — and offers a consultation.
+
+**The AI proposes; code decides.** Gemini Flash extracts fields and judges each
+criterion, with a verbatim quote from the transcript for each judgement. The code
+checks that every quote is really in the transcript; one that is not downgrades
+that criterion to `unclear`, whichever way the model leaned. Outcome, priority,
+routing, assignment and escalation are plain TypeScript with a test per rule.
+
+## Documents
+
+- `PHASE0-PLAN.md` — the plan, all 40 enquiries assessed with evidence, and the
+  eleven conflicts found between `qualified.md`, `services.md` and what the front
+  desk actually did.
+- `OPEN_DECISIONS.md` — every rule not backed by a context file, with the safe
+  default the code runs today.
+- `RUNBOOK.md` — operating it, and what still needs verifying with Vaani.
+- `EXTENDING.md` — adding a channel, swapping a provider.
+- `CLAUDE.md` — what a fresh session needs to know first.

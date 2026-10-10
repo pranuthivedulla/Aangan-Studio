@@ -1,0 +1,31 @@
+node_modules/
+.next/
+coverage/
+dist/
+*.tsbuildinfo
+
+# Secrets. Only .env.example is committed.
+.env
+.env.*
+!.env.example
+
+# Supplied source material that does not belong in the repo.
+# The context files themselves ARE committed (context/) because the business
+# rules must be version-controlled; these two are the raw drop and a photo.
+drive-download-*.zip
+stack.jpeg
+
+# Transcripts are sensitive (non-negotiable 8). The anonymised September set is
+# committed deliberately as test fixture material; any later real-call export is
+# not.
+context/enquiries/real-*
+*.transcript.json
+
+.DS_Store
+Thumbs.db
+
+# A separate project is nested inside this folder: Desktop/Term 1/Arjun_Hiring
+# Application/kargo-shortlist. It has its own .git and its own .env.local with
+# live credentials. It is not part of this repo and must never be committed
+# here. Flagged to the user rather than moved or deleted.
+Desktop/

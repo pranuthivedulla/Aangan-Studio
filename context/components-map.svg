@@ -1,0 +1,305 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="dg" width="1842" height="1684" viewBox="0 0 1842 1684"><style>
+.dg{font-family:Figtree,'Helvetica Neue',Arial,'Liberation Sans',sans-serif}
+.dg .head{fill:#1F2A37} .dg .headtxt{fill:#F2F5F8;font-size:15px;font-weight:700;letter-spacing:.04em}
+.dg .headsep{stroke:#F2F5F8;stroke-opacity:.22}
+.dg .labname{fill:#1B2430;font-size:15px;font-weight:700}
+.dg .labsub{fill:#566274;font-size:11.5px}
+.dg .sep{stroke:#D5DBE3;stroke-width:1} .dg .guide{stroke:#E7ECF1;stroke-width:1;stroke-dasharray:2 5}
+.dg .lab{stroke:none}
+.dg .bx{stroke-width:1.6} .bx-build{fill:#ECE7DA;stroke:#8F7E52} .lab-build{fill:#ECE7DA}
+.bx-caller{fill:#DCE8FA;stroke:#4F83D1} .lab-caller{fill:#DCE8FA}
+.bx-voice{fill:#E7E0F8;stroke:#7E63C9} .lab-voice{fill:#E7E0F8}
+.bx-ai{fill:#FADDE6;stroke:#CC5D86} .lab-ai{fill:#FADDE6}
+.bx-sys{fill:#D2EFEA;stroke:#2F9A8C} .lab-sys{fill:#D2EFEA}
+.bx-db{fill:#D9EAF4;stroke:#3D8DB5} .lab-db{fill:#D9EAF4}
+.bx-tools{fill:#F8EBC8;stroke:#BC8F1F} .lab-tools{fill:#F8EBC8}
+.bx-designer{fill:#DDF0D2;stroke:#5FA23F} .lab-designer{fill:#DDF0D2}
+.bx-desk{fill:#FBDCCB;stroke:#D4692F} .lab-desk{fill:#FBDCCB}
+.bx-nikhil{fill:#E3E7EE;stroke:#5F6F86} .lab-nikhil{fill:#E3E7EE}
+.dg .bt{fill:#1B2430;font-size:12.5px;font-weight:500}
+.dg .nb{fill:#1B2430} .dg .nt{fill:#F7F9FB;font-size:12px;font-weight:700}
+.dg .ln{stroke-width:2;stroke-linejoin:round}
+.dg .ln-main{stroke:#3A4656} .dg .ln-branch{stroke:#3A4656;stroke-dasharray:6 5} .dg .ln-alert{stroke:#C8372D;stroke-dasharray:6 5;stroke-width:2.2}
+.dg .halo{stroke:#F7F9FB;stroke-width:8;stroke-linejoin:round}
+.dg .mk-main,.dg .mk-branch{fill:#3A4656} .dg .mk-alert{fill:#C8372D}
+.dg .jn-main,.dg .jn-branch{fill:#3A4656}
+.dg .lbl{fill:#566274;font-size:11.5px;font-weight:600} .dg .lbl-alert{fill:#C8372D}
+</style><rect width="1842" height="1684" fill="#F7F9FB"/><defs>
+<marker id="ah-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk mk-main"/></marker>
+<marker id="ah-branch" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk mk-branch"/></marker>
+<marker id="ah-alert" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk mk-alert"/></marker>
+</defs>
+<rect x="0" y="0" width="1842" height="54" class="head"/>
+<text x="88.0" y="32.0" text-anchor="middle" class="headtxt">Actor</text>
+<text x="312.0" y="32.0" text-anchor="middle" class="headtxt">Trigger</text>
+<text x="584.0" y="32.0" text-anchor="middle" class="headtxt">Input</text>
+<line x1="448" y1="8" x2="448" y2="46" class="headsep"/>
+<text x="856.0" y="32.0" text-anchor="middle" class="headtxt">Context</text>
+<line x1="720" y1="8" x2="720" y2="46" class="headsep"/>
+<text x="1128.0" y="32.0" text-anchor="middle" class="headtxt">Processing</text>
+<line x1="992" y1="8" x2="992" y2="46" class="headsep"/>
+<text x="1400.0" y="32.0" text-anchor="middle" class="headtxt">AI</text>
+<line x1="1264" y1="8" x2="1264" y2="46" class="headsep"/>
+<text x="1672.0" y="32.0" text-anchor="middle" class="headtxt">Output</text>
+<line x1="1536" y1="8" x2="1536" y2="46" class="headsep"/>
+<rect x="0" y="54" width="176" height="112" class="lab lab-build"/>
+<text x="14" y="107.0" class="labname">Build time</text>
+<text x="14" y="124.0" class="labsub">Before go-live: Claude</text>
+<text x="14" y="138.0" class="labsub">Chat, Claude Code,</text>
+<text x="14" y="152.0" class="labsub">GitHub, Vercel</text>
+<line x1="0" y1="166" x2="1842" y2="166" class="sep"/>
+<rect x="0" y="166" width="176" height="112" class="lab lab-caller"/>
+<text x="14" y="219.0" class="labname">Caller</text>
+<text x="14" y="236.0" class="labsub">User</text>
+<line x1="0" y1="278" x2="1842" y2="278" class="sep"/>
+<rect x="0" y="278" width="176" height="112" class="lab lab-voice"/>
+<text x="14" y="331.0" class="labname">Voice agent</text>
+<text x="14" y="348.0" class="labsub">Vaani Labs: voice,</text>
+<text x="14" y="362.0" class="labsub">telephony, call flow</text>
+<line x1="0" y1="390" x2="1842" y2="390" class="sep"/>
+<rect x="0" y="390" width="176" height="112" class="lab lab-ai"/>
+<text x="14" y="443.0" class="labname">AI model</text>
+<text x="14" y="460.0" class="labsub">Gemini Flash</text>
+<line x1="0" y1="502" x2="1842" y2="502" class="sep"/>
+<rect x="0" y="502" width="176" height="412" class="lab lab-sys"/>
+<text x="14" y="705.0" class="labname">System</text>
+<text x="14" y="722.0" class="labsub">Next.js app on Vercel</text>
+<line x1="0" y1="914" x2="1842" y2="914" class="sep"/>
+<rect x="0" y="914" width="176" height="112" class="lab lab-db"/>
+<text x="14" y="967.0" class="labname">Database</text>
+<text x="14" y="984.0" class="labsub">Supabase (Neon as a</text>
+<text x="14" y="998.0" class="labsub">swap)</text>
+<line x1="0" y1="1026" x2="1842" y2="1026" class="sep"/>
+<rect x="0" y="1026" width="176" height="212" class="lab lab-tools"/>
+<text x="14" y="1129.0" class="labname">Connected tools</text>
+<text x="14" y="1146.0" class="labsub">Google Calendar (or</text>
+<text x="14" y="1160.0" class="labsub">Cal.com / Calendly) ·</text>
+<text x="14" y="1174.0" class="labsub">HubSpot · Telegram ·</text>
+<text x="14" y="1188.0" class="labsub">Resend</text>
+<line x1="0" y1="1238" x2="1842" y2="1238" class="sep"/>
+<rect x="0" y="1238" width="176" height="212" class="lab lab-designer"/>
+<text x="14" y="1341.0" class="labname">Designer</text>
+<text x="14" y="1358.0" class="labsub">On duty</text>
+<line x1="0" y1="1450" x2="1842" y2="1450" class="sep"/>
+<rect x="0" y="1450" width="176" height="112" class="lab lab-desk"/>
+<text x="14" y="1503.0" class="labname">Front desk</text>
+<text x="14" y="1520.0" class="labsub">Two people, 10am to</text>
+<text x="14" y="1534.0" class="labsub">7pm</text>
+<line x1="0" y1="1562" x2="1842" y2="1562" class="sep"/>
+<rect x="0" y="1562" width="176" height="112" class="lab lab-nikhil"/>
+<text x="14" y="1615.0" class="labname">Nikhil</text>
+<text x="14" y="1632.0" class="labsub">Founder</text>
+<line x1="0" y1="1674" x2="1842" y2="1674" class="sep"/>
+<line x1="448" y1="54" x2="448" y2="1674" class="guide"/>
+<line x1="720" y1="54" x2="720" y2="1674" class="guide"/>
+<line x1="992" y1="54" x2="992" y2="1674" class="guide"/>
+<line x1="1264" y1="54" x2="1264" y2="1674" class="guide"/>
+<line x1="1536" y1="54" x2="1536" y2="1674" class="guide"/>
+<path d="M312.0,264.0 L312.0,291.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M428.0,334.0 L448.0,334.0 L448.0,222.0 L467.0,222.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M584.0,264.0 L584.0,291.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M584.0,376.0 L584.0,558.0 L739.0,558.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M584.0,446.0 L1011.0,446.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<circle cx="584.0" cy="446.0" r="3.2" class="jn jn-main"/>
+<text x="734.0" y="438.0" text-anchor="start" class="lbl">transcript to Flash</text>
+<path d="M972.0,558.0 L1011.0,558.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1128.0,488.0 L1128.0,515.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1128.0,600.0 L1128.0,615.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1128.0,700.0 L1128.0,715.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1128.0,800.0 L1128.0,815.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M972.0,1082.0 L992.0,1082.0 L992.0,858.0 L1011.0,858.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<text x="714.0" y="1070.0" text-anchor="end" class="lbl">slots</text>
+<path d="M1244.0,858.0 L1264.0,858.0 L1264.0,334.0 L1283.0,334.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1264.0,446.0 L1283.0,446.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<circle cx="1264.0" cy="446.0" r="3.2" class="jn jn-main"/>
+<path d="M1244.0,758.0 L1264.0,758.0" class="ln ln-branch" fill="none"/>
+<circle cx="1264.0" cy="758.0" r="3.2" class="jn jn-branch"/>
+<text x="1272.0" y="751.0" text-anchor="start" class="lbl">ask one question</text>
+<path d="M1244.0,858.0 L1555.0,858.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<text x="1294.0" y="851.0" text-anchor="start" class="lbl">book</text>
+<path d="M1516.0,334.0 L1536.0,334.0 L1536.0,222.0 L1555.0,222.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1128.0,900.0 L1128.0,1082.0 L1283.0,1082.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<text x="1140.0" y="1074.0" text-anchor="start" class="lbl">book slot</text>
+<path d="M1516.0,446.0 L1536.0,446.0 L1536.0,1182.0 L1555.0,1182.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1672.0,1224.0 L1672.0,1251.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1672.0,1336.0 L1672.0,1351.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1556.0,1294.0 L1517.0,1294.0" class="ln ln-branch" fill="none" marker-end="url(#ah-branch)"/>
+<path d="M1400.0,1336.0 L1400.0,1490.0 L1555.0,1490.0" class="ln ln-branch" fill="none" marker-end="url(#ah-branch)"/>
+<path d="M1012.0,758.0 L720.0,758.0 L720.0,1522.0 L1555.0,1522.0" class="ln ln-branch" fill="none" marker-end="url(#ah-branch)"/>
+<text x="734.0" y="1514.0" text-anchor="start" class="lbl">decline · review · park</text>
+<path d="M1244.0,558.0 L1828.0,558.0 L1828.0,1492.0 L1789.0,1492.0" class="halo" fill="none"/>
+<path d="M1244.0,558.0 L1828.0,558.0 L1828.0,1492.0 L1789.0,1492.0" class="ln ln-alert" fill="none" marker-end="url(#ah-alert)"/>
+<text x="1308.0" y="550.0" text-anchor="start" class="lbl lbl-alert">complaint</text>
+<path d="M972.0,110.0 L1011.0,110.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1244.0,110.0 L1283.0,110.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1516.0,110.0 L1555.0,110.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M856.0,152.0 L856.0,515.0" class="halo" fill="none"/>
+<path d="M856.0,152.0 L856.0,515.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<text x="866.0" y="174.0" text-anchor="start" class="lbl">qualification logic</text>
+<path d="M856.0,928.0 L856.0,601.0" class="halo" fill="none"/>
+<path d="M856.0,928.0 L856.0,601.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<text x="866.0" y="916.0" text-anchor="start" class="lbl">loads at call time</text>
+<path d="M1672.0,900.0 L1672.0,927.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<text x="1682.0" y="918.0" text-anchor="start" class="lbl">writes log</text>
+<path d="M1788.0,970.0 L1808.0,970.0 L1808.0,1618.0 L1789.0,1618.0" class="halo" fill="none"/>
+<path d="M1788.0,970.0 L1808.0,970.0 L1808.0,1618.0 L1789.0,1618.0" class="ln ln-main" fill="none" marker-end="url(#ah-main)"/>
+<path d="M1536.0,1182.0 L1517.0,1182.0" class="ln ln-branch" fill="none" marker-end="url(#ah-branch)"/>
+<circle cx="1536.0" cy="1182.0" r="3.2" class="jn jn-branch"/>
+<rect x="196.0" y="180.0" width="232" height="84" rx="8" class="bx bx-caller"/>
+<text x="212.0" y="226.0" class="bt">Calls the studio line</text>
+<circle cx="196.0" cy="180.0" r="11.5" class="nb"/>
+<text x="196.0" y="184.0" text-anchor="middle" class="nt">1</text>
+<rect x="196.0" y="292.0" width="232" height="84" rx="8" class="bx bx-voice"/>
+<text x="212.0" y="330.0" class="bt">Vaani picks up after 4</text>
+<text x="212.0" y="346.0" class="bt">unanswered rings, at any hour</text>
+<circle cx="196.0" cy="292.0" r="11.5" class="nb"/>
+<text x="196.0" y="296.0" text-anchor="middle" class="nt">2</text>
+<rect x="468.0" y="180.0" width="232" height="84" rx="8" class="bx bx-caller"/>
+<text x="484.0" y="218.0" class="bt">Answers: space, area, size,</text>
+<text x="484.0" y="234.0" class="bt">scope, timeline, who decides</text>
+<circle cx="468.0" cy="180.0" r="11.5" class="nb"/>
+<text x="468.0" y="184.0" text-anchor="middle" class="nt">3</text>
+<rect x="468.0" y="292.0" width="232" height="84" rx="8" class="bx bx-voice"/>
+<text x="484.0" y="330.0" class="bt">Vaani records caller ID, live</text>
+<text x="484.0" y="346.0" class="bt">transcript and time</text>
+<circle cx="468.0" cy="292.0" r="11.5" class="nb"/>
+<text x="468.0" y="296.0" text-anchor="middle" class="nt">4</text>
+<rect x="740.0" y="516.0" width="232" height="84" rx="8" class="bx bx-sys"/>
+<text x="756.0" y="546.0" class="bt">Loads the rules and this</text>
+<text x="756.0" y="562.0" class="bt">caller's history from the</text>
+<text x="756.0" y="578.0" class="bt">database</text>
+<circle cx="740.0" cy="516.0" r="11.5" class="nb"/>
+<text x="740.0" y="520.0" text-anchor="middle" class="nt">5</text>
+<rect x="740.0" y="1040.0" width="232" height="84" rx="8" class="bx bx-tools"/>
+<text x="756.0" y="1078.0" class="bt">Free/busy from Google Calendar;</text>
+<text x="756.0" y="1094.0" class="bt">Cal.com or Calendly swap in</text>
+<circle cx="740.0" cy="1040.0" r="11.5" class="nb"/>
+<text x="740.0" y="1044.0" text-anchor="middle" class="nt">6</text>
+<rect x="1012.0" y="404.0" width="232" height="84" rx="8" class="bx bx-ai"/>
+<text x="1028.0" y="442.0" class="bt">Gemini Flash extracts fields;</text>
+<text x="1028.0" y="458.0" class="bt">classifies intent and scope</text>
+<circle cx="1012.0" cy="404.0" r="11.5" class="nb"/>
+<text x="1012.0" y="408.0" text-anchor="middle" class="nt">7</text>
+<rect x="1012.0" y="516.0" width="232" height="84" rx="8" class="bx bx-sys"/>
+<text x="1028.0" y="554.0" class="bt">Existing client? Repeat caller?</text>
+<text x="1028.0" y="570.0" class="bt">Complaints go to 21</text>
+<circle cx="1012.0" cy="516.0" r="11.5" class="nb"/>
+<text x="1012.0" y="520.0" text-anchor="middle" class="nt">8</text>
+<rect x="1012.0" y="616.0" width="232" height="84" rx="8" class="bx bx-sys"/>
+<text x="1028.0" y="654.0" class="bt">Scores five criteria and scope:</text>
+<text x="1028.0" y="670.0" class="bt">pass · unclear · fail</text>
+<circle cx="1012.0" cy="616.0" r="11.5" class="nb"/>
+<text x="1012.0" y="620.0" text-anchor="middle" class="nt">9</text>
+<rect x="1012.0" y="716.0" width="232" height="84" rx="8" class="bx bx-sys"/>
+<text x="1028.0" y="746.0" class="bt">Outcome: book · ask one ·</text>
+<text x="1028.0" y="762.0" class="bt">decline · review · park. Sets</text>
+<text x="1028.0" y="778.0" class="bt">priority flag</text>
+<circle cx="1012.0" cy="716.0" r="11.5" class="nb"/>
+<text x="1012.0" y="720.0" text-anchor="middle" class="nt">10</text>
+<rect x="1012.0" y="816.0" width="232" height="84" rx="8" class="bx bx-sys"/>
+<text x="1028.0" y="854.0" class="bt">Picks designer from duty rota;</text>
+<text x="1028.0" y="870.0" class="bt">finds 2–3 free slots</text>
+<circle cx="1012.0" cy="816.0" r="11.5" class="nb"/>
+<text x="1012.0" y="820.0" text-anchor="middle" class="nt">11</text>
+<rect x="1284.0" y="292.0" width="232" height="84" rx="8" class="bx bx-voice"/>
+<text x="1300.0" y="314.0" class="bt">Vaani talks to the caller;</text>
+<text x="1300.0" y="330.0" class="bt">price gets the approved</text>
+<text x="1300.0" y="346.0" class="bt">sentence; offers slots, reads</text>
+<text x="1300.0" y="362.0" class="bt">back</text>
+<circle cx="1284.0" cy="292.0" r="11.5" class="nb"/>
+<text x="1284.0" y="296.0" text-anchor="middle" class="nt">12</text>
+<rect x="1284.0" y="404.0" width="232" height="84" rx="8" class="bx bx-ai"/>
+<text x="1300.0" y="434.0" class="bt">Gemini Flash writes a 2-line</text>
+<text x="1300.0" y="450.0" class="bt">prep summary and the handoff</text>
+<text x="1300.0" y="466.0" class="bt">note</text>
+<circle cx="1284.0" cy="404.0" r="11.5" class="nb"/>
+<text x="1284.0" y="408.0" text-anchor="middle" class="nt">13</text>
+<rect x="1284.0" y="1040.0" width="232" height="84" rx="8" class="bx bx-tools"/>
+<text x="1300.0" y="1070.0" class="bt">Booked inside the call:</text>
+<text x="1300.0" y="1086.0" class="bt">calendar event, designer and</text>
+<text x="1300.0" y="1102.0" class="bt">client invited (see 15)</text>
+<circle cx="1284.0" cy="1040.0" r="11.5" class="nb"/>
+<text x="1284.0" y="1044.0" text-anchor="middle" class="nt">14</text>
+<rect x="1556.0" y="180.0" width="232" height="84" rx="8" class="bx bx-caller"/>
+<text x="1572.0" y="210.0" class="bt">Hears the confirmed slot;</text>
+<text x="1572.0" y="226.0" class="bt">invite arrives from 14. Or a</text>
+<text x="1572.0" y="242.0" class="bt">polite decline</text>
+<circle cx="1556.0" cy="180.0" r="11.5" class="nb"/>
+<text x="1556.0" y="184.0" text-anchor="middle" class="nt">15</text>
+<rect x="1556.0" y="1140.0" width="232" height="84" rx="8" class="bx bx-tools"/>
+<text x="1572.0" y="1178.0" class="bt">HubSpot record with prep note ·</text>
+<text x="1572.0" y="1194.0" class="bt">Telegram alert: summary + link</text>
+<circle cx="1556.0" cy="1140.0" r="11.5" class="nb"/>
+<text x="1556.0" y="1144.0" text-anchor="middle" class="nt">16</text>
+<rect x="1556.0" y="816.0" width="232" height="84" rx="8" class="bx bx-sys"/>
+<text x="1572.0" y="846.0" class="bt">Logs call, cost, outcome;</text>
+<text x="1572.0" y="862.0" class="bt">starts the acknowledgement</text>
+<text x="1572.0" y="878.0" class="bt">clock</text>
+<circle cx="1556.0" cy="816.0" r="11.5" class="nb"/>
+<text x="1556.0" y="820.0" text-anchor="middle" class="nt">17</text>
+<rect x="1556.0" y="1252.0" width="232" height="84" rx="8" class="bx bx-designer"/>
+<text x="1572.0" y="1290.0" class="bt">Acknowledges, reads the prep</text>
+<text x="1572.0" y="1306.0" class="bt">note, runs the consultation</text>
+<circle cx="1556.0" cy="1252.0" r="11.5" class="nb"/>
+<text x="1556.0" y="1256.0" text-anchor="middle" class="nt">18</text>
+<rect x="1556.0" y="1352.0" width="232" height="84" rx="8" class="bx bx-designer"/>
+<text x="1572.0" y="1382.0" class="bt">Adds budget, insights, notes in</text>
+<text x="1572.0" y="1398.0" class="bt">HubSpot (Granola notes pasted</text>
+<text x="1572.0" y="1414.0" class="bt">in)</text>
+<circle cx="1556.0" cy="1352.0" r="11.5" class="nb"/>
+<text x="1556.0" y="1356.0" text-anchor="middle" class="nt">19</text>
+<rect x="1284.0" y="1252.0" width="232" height="84" rx="8" class="bx bx-designer"/>
+<text x="1300.0" y="1282.0" class="bt">No acknowledgement in 30</text>
+<text x="1300.0" y="1298.0" class="bt">working min: backup designer,</text>
+<text x="1300.0" y="1314.0" class="bt">then front-desk lead</text>
+<circle cx="1284.0" cy="1252.0" r="11.5" class="nb"/>
+<text x="1284.0" y="1256.0" text-anchor="middle" class="nt">20</text>
+<rect x="1556.0" y="1464.0" width="232" height="84" rx="8" class="bx bx-desk"/>
+<text x="1572.0" y="1494.0" class="bt">Reviews declines, parks, narrow</text>
+<text x="1572.0" y="1510.0" class="bt">scope and complaints; calls</text>
+<text x="1572.0" y="1526.0" class="bt">back; qualified leads go to 18</text>
+<circle cx="1556.0" cy="1464.0" r="11.5" class="nb"/>
+<text x="1556.0" y="1468.0" text-anchor="middle" class="nt">21</text>
+<rect x="740.0" y="68.0" width="232" height="84" rx="8" class="bx bx-build"/>
+<text x="756.0" y="98.0" class="bt">Claude Chat: designs the</text>
+<text x="756.0" y="114.0" class="bt">qualification logic in plain</text>
+<text x="756.0" y="130.0" class="bt">language, no code</text>
+<circle cx="740.0" cy="68.0" r="11.5" class="nb"/>
+<text x="740.0" y="72.0" text-anchor="middle" class="nt">A</text>
+<rect x="1012.0" y="68.0" width="232" height="84" rx="8" class="bx bx-build"/>
+<text x="1028.0" y="106.0" class="bt">Claude Code: builds the app</text>
+<text x="1028.0" y="122.0" class="bt">from this map, end to end</text>
+<circle cx="1012.0" cy="68.0" r="11.5" class="nb"/>
+<text x="1012.0" y="72.0" text-anchor="middle" class="nt">B</text>
+<rect x="1284.0" y="68.0" width="232" height="84" rx="8" class="bx bx-build"/>
+<text x="1300.0" y="106.0" class="bt">GitHub: saves progress between</text>
+<text x="1300.0" y="122.0" class="bt">every session</text>
+<circle cx="1284.0" cy="68.0" r="11.5" class="nb"/>
+<text x="1284.0" y="72.0" text-anchor="middle" class="nt">C</text>
+<rect x="1556.0" y="68.0" width="232" height="84" rx="8" class="bx bx-build"/>
+<text x="1572.0" y="106.0" class="bt">Vercel: hosts the app and</text>
+<text x="1572.0" y="122.0" class="bt">Nikhil's dashboard</text>
+<circle cx="1556.0" cy="68.0" r="11.5" class="nb"/>
+<text x="1556.0" y="72.0" text-anchor="middle" class="nt">D</text>
+<rect x="1556.0" y="928.0" width="232" height="84" rx="8" class="bx bx-db"/>
+<text x="1572.0" y="966.0" class="bt">Supabase: call log, cost, lead</text>
+<text x="1572.0" y="982.0" class="bt">state, acknowledgement clock</text>
+<circle cx="1556.0" cy="928.0" r="11.5" class="nb"/>
+<text x="1556.0" y="932.0" text-anchor="middle" class="nt">23</text>
+<rect x="740.0" y="928.0" width="232" height="84" rx="8" class="bx bx-db"/>
+<text x="756.0" y="958.0" class="bt">Supabase: rules (services, five</text>
+<text x="756.0" y="974.0" class="bt">criteria, price guard), lead</text>
+<text x="756.0" y="990.0" class="bt">log, client roster, duty rota</text>
+<circle cx="740.0" cy="928.0" r="11.5" class="nb"/>
+<text x="740.0" y="932.0" text-anchor="middle" class="nt">24</text>
+<rect x="1284.0" y="1140.0" width="232" height="84" rx="8" class="bx bx-tools"/>
+<text x="1300.0" y="1178.0" class="bt">Resend email: fallback alert</text>
+<text x="1300.0" y="1194.0" class="bt">for a designer without Telegram</text>
+<circle cx="1284.0" cy="1140.0" r="11.5" class="nb"/>
+<text x="1284.0" y="1144.0" text-anchor="middle" class="nt">25</text>
+<rect x="1556.0" y="1576.0" width="232" height="84" rx="8" class="bx bx-nikhil"/>
+<text x="1572.0" y="1606.0" class="bt">Vercel dashboard, read-only:</text>
+<text x="1572.0" y="1622.0" class="bt">funnel, queues, cost, complaint</text>
+<text x="1572.0" y="1638.0" class="bt">count. Fed by 23 and 19</text>
+<circle cx="1556.0" cy="1576.0" r="11.5" class="nb"/>
+<text x="1556.0" y="1580.0" text-anchor="middle" class="nt">22</text></svg>

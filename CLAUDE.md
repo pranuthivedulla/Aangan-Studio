@@ -1,0 +1,82 @@
+# Aangan enquiry agent
+
+Context for any session picking up this project. Read before changing anything.
+
+## The rules
+
+- Phone only. Never quote a price. AI proposes, code decides.
+- Front desk rings first; Vaani picks up after 4 rings, any hour. When in doubt,
+  forward to a designer (borderline), except gate fails, out-of-service,
+  complaints and narrow scope.
+- Business rules live in `/context` and `/config`, never inline.
+- Single writer per field. The handoff note is designer-only.
+- Before each phase, write a REASONING block: goal, evidence, options, choice,
+  risks, check. Run the checks; report real results.
+- Tag claims `[Certain]` / `[Likely]` / `[Guessing]`. Third-party limits are
+  `[verify]`.
+- All integrations behind adapters with mocks; the app must run with no
+  credentials.
+- Stack: Vaani Labs (voice), Gemini Flash (extract, summarise), Google Calendar
+  (Cal.com/Calendly swap), HubSpot (CRM), Telegram + Resend (alerts), Supabase
+  (state), Vercel (hosting, dashboard), GitHub (progress). Use all of it.
+
+## Where things actually stand
+
+Phase 0 and Phase 1 are done. `PHASE0-PLAN.md` holds the plan, the assessment of
+all 40 September enquiries and the conflicts found in the context files. Read it
+before touching the qualification logic.
+
+**Phase 1, built and verified on 10 Oct 2026:** config layer (criteria, scope,
+localities, budget floors, rota, priority, approved phrases, open decisions,
+settings schema), domain types, the Zod extraction contract with evidence
+verification, the lead state machine, all seven adapters with mocks, the
+settings service, pipeline stage types, the Supabase migration, 132 tests, CI.
+`npm run check` is green: typecheck clean, lint clean, 132/132 tests pass.
+
+**Not built:** every pipeline stage body (Phases 2–4), the Vaani call flow
+(Phase 5), the dashboard (Phase 6), and all seven real adapters (Phase 7).
+Asking for a real adapter throws on purpose — see `src/adapters/index.ts`.
+
+## Rulings, so they are not re-litigated
+
+- **Pricing (10 Oct 2026).** The brief's §1 mention of "a pricing quote from the
+  system" is a slip. No figure ever leaves this system, the handoff note
+  included. The approved sentence is `pricing.md`'s own wording, verbatim.
+- **`GATE_FAIL_THRESHOLD = 2` (10 Oct 2026).** Two or more gate fails decline; a
+  single gate fail goes to front-desk review. I recommended 1 and was overruled;
+  the reasoning on both sides is in `config/open-decisions.ts` D24. Out-of-service
+  scope declines independently of this, which is why T03 and T19 still decline.
+- **`advice_only` declines (10 Oct 2026, D26).** It is an out-of-service class
+  per `services.md`, not a criterion-1 fail, so "just exploring" callers do not
+  flood the front desk.
+
+## Things that will bite you
+
+- **Four fixtures are `pending-ruling`**, not unimplemented: T10 (D20, no budget
+  floor exists), T14 (D21), T16 (D22), T18 (D2). They fail loudly on purpose.
+  Do not encode a guess to make them green.
+- **Budget floors are `null` and must stay that way until Nikhil sets them.**
+  Deriving them from `pricing.md` at runtime would put quotable figures in the
+  request path. `pricing.md` is read by tests only.
+- **An unrecognised locality is `unclear`, never `fail`.** `services.md`'s list
+  is incomplete — Kharadi and Nanded City appear in the transcripts and in
+  neither list. A wrong decline on criterion 2 is a lost project with no human
+  in the loop.
+- **D27 is unresolved and it is load-bearing.** Whether Vaani can call a webhook
+  mid-call and wait for a structured reply decides whether in-call booking and
+  the one-question rule are possible at all. The voice adapter declares
+  `per_turn` or `post_call_only` so the pipeline cannot promise what the
+  platform cannot do.
+- **Transcripts are sensitive.** Never log them, never send them outside the
+  approved stack. `no-console` is an error for this reason.
+- **A separate project is nested in this folder**, at `Desktop/Term 1/
+  Arjun_Hiring Application/kargo-shortlist`, with its own `.git` and its own
+  `.env.local`. It is git-ignored and eslint-ignored. Do not commit it, and do
+  not assume it is ours.
+
+## Commands
+
+```bash
+npm run check      # typecheck + lint + test, the gate before any commit
+npm run test       # 132 tests, no credentials needed
+```
