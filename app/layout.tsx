@@ -4,106 +4,200 @@ import type { ReactNode } from 'react';
 export const metadata: Metadata = {
   title: 'Aangan Studio — enquiry agent',
   description:
-    'A phone enquiry agent that qualifies calls, books designer consultations and never quotes a price. Coursework build.',
+    'A phone enquiry agent that qualifies calls, books designer consultations and never quotes a price.',
 };
 
 /**
- * One stylesheet, inline, no framework.
+ * The shell: a fixed sidebar and a content column, in the shape of the
+ * dashboard reference the founder's office supplied.
  *
- * This page exists to show what the engine decides, honestly, to a grader and
- * to the founder's office. A design system would be more code to review and
- * nothing more to read.
+ * Taken from that reference: the sidebar, the card grammar, the density, the
+ * muted label under a large figure.
+ *
+ * NOT taken, deliberately: the reference shows a table of clients with names,
+ * emails and phone numbers, and a revenue figure with a trend arrow. Nikhil's
+ * view is aggregates only — a non-negotiable, not a layout choice — and there
+ * is no revenue data, so such a card could only be invented. A dashboard that
+ * looks finished because its numbers are made up is worse than one that
+ * admits what it does not know.
+ *
+ * One stylesheet, inline, no framework: about 200 lines a reviewer can read.
  */
 const css = `
   :root {
-    --ink: #1b2430;
-    --muted: #566274;
-    --line: #d5dbe3;
-    --bg: #f7f9fb;
-    --card: #ffffff;
-    --book: #2f7d32;
-    --ask: #8a6100;
-    --decline: #a33228;
-    --review: #1f5e8a;
-    --complaint: #7a2f6b;
+    --ink: #e8edf4; --muted: #8b97a8; --dim: #5d6878;
+    --line: #232c38; --line-soft: #1b222c;
+    --bg: #0e1319; --panel: #141a22; --panel-2: #192029;
+    --accent: #5b8def;
+    --ok: #4aa96c; --warn: #c9a227; --bad: #d4664f; --info: #5a9ec9; --plum: #a872b8;
+    --radius: 12px;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --ink: #e7ecf1; --muted: #9aa7b8; --line: #2c3644; --bg: #121820; --card: #1a222c;
-      --book: #7cc47f; --ask: #e0b254; --decline: #e58a7f; --review: #7fb6dd; --complaint: #cf9ac2;
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --ink: #16202b; --muted: #5c6878; --dim: #8a94a2;
+      --line: #e2e7ee; --line-soft: #eef1f6;
+      --bg: #f6f8fb; --panel: #ffffff; --panel-2: #fbfcfe;
+      --accent: #2f6fe0;
+      --ok: #2f7d47; --warn: #8a6d12; --bad: #b24a33; --info: #2d6f96; --plum: #7c4a8c;
     }
   }
   * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
   body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font: 16px/1.6 Figtree, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--ink);
+    font: 15px/1.6 Figtree, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
-  main { max-width: 1060px; margin: 0 auto; padding: 48px 16px 96px; }
-  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.01em; }
-  h2 { font-size: 20px; margin: 40px 0 12px; }
-  h3 { font-size: 16px; margin: 28px 0 8px; }
-  p { margin: 0 0 14px; max-width: 68ch; }
-  a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
-  .lede { color: var(--muted); font-size: 18px; max-width: 64ch; }
-  .card {
-    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
-    padding: 18px 20px; margin: 18px 0;
-  }
-  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
-  .stat { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
-  .label { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; }
-  .stat.muted { color: var(--muted); font-weight: 400; }
-  .stat-lg { font-size: 34px; }
-  .absent { color: var(--muted); font-size: 12px; margin-top: 6px; line-height: 1.45; }
-  .stat-card { display: flex; flex-direction: column; justify-content: flex-start; }
+  a { color: inherit; }
 
-  /* The funnel reads left to right, and wraps to a column on a phone. */
-  .funnel {
-    display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; margin: 18px 0;
+  .shell { display: flex; min-height: 100vh; }
+
+  .side {
+    width: 232px; flex: 0 0 232px; background: var(--panel);
+    border-right: 1px solid var(--line); padding: 20px 14px;
+    display: flex; flex-direction: column; gap: 26px;
+    position: sticky; top: 0; height: 100vh;
   }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 0 8px; }
+  .brand-mark {
+    width: 32px; height: 32px; border-radius: 9px; flex: 0 0 32px;
+    background: var(--accent); color: #fff; display: grid; place-items: center;
+    font-weight: 700; font-size: 14px;
+  }
+  .brand-name { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
+  .brand-sub { color: var(--dim); font-size: 11px; margin-top: 1px; }
+
+  .nav-group { display: flex; flex-direction: column; gap: 2px; }
+  .nav-title {
+    color: var(--dim); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0 8px; margin-bottom: 6px; font-weight: 600;
+  }
+  .side a.nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px;
+    border-radius: 9px; text-decoration: none; color: var(--muted); font-size: 14px;
+  }
+  .side a.nav-item:hover { background: var(--panel-2); color: var(--ink); }
+  .nav-item svg { width: 17px; height: 17px; flex: 0 0 17px; opacity: 0.85; }
+
+  .side-foot { margin-top: auto; }
+  .capacity {
+    background: var(--panel-2); border: 1px solid var(--line-soft);
+    border-radius: 10px; padding: 12px 13px;
+  }
+  .capacity .label { margin: 0 0 8px; }
+  .bar { height: 5px; border-radius: 99px; background: var(--line); overflow: hidden; }
+  .bar > span { display: block; height: 100%; background: var(--accent); }
+
+  .main { flex: 1 1 auto; min-width: 0; }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 16px 28px; border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; background: var(--bg); z-index: 5;
+  }
+  .topbar h2 { margin: 0; font-size: 15px; font-weight: 600; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px; font-size: 12px;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 99px;
+    padding: 5px 11px; white-space: nowrap;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 99px; background: var(--warn); flex: 0 0 7px; }
+  main.content { padding: 28px; max-width: 1180px; }
+
+  h1 { font-size: 27px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.02em; }
+  h2 { font-size: 17px; margin: 38px 0 4px; letter-spacing: -0.01em; }
+  h3 { font-size: 14px; margin: 26px 0 8px; }
+  p { margin: 0 0 14px; max-width: 70ch; color: var(--muted); }
+  .lede { font-size: 16px; max-width: 66ch; }
+  ul { margin: 0 0 14px; padding-left: 20px; max-width: 70ch; color: var(--muted); }
+  li { margin-bottom: 5px; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em;
+    background: var(--panel-2); border: 1px solid var(--line-soft);
+    padding: 1px 5px; border-radius: 5px;
+  }
+
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 16px 18px;
+  }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(188px, 1fr)); }
+  .stat { font-size: 27px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .stat-lg { font-size: 33px; }
+  .stat.muted { color: var(--dim); font-weight: 400; }
+  .label {
+    color: var(--muted); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.07em; font-weight: 600; margin-top: 7px;
+  }
+  .absent { color: var(--dim); font-size: 11.5px; margin-top: 7px; line-height: 1.45; }
+  .warn { border-left: 3px solid var(--warn); }
+  .stat-card { display: flex; flex-direction: column; }
+
+  /* Five steps and four arrows have to survive a narrow content column, so
+     the steps shrink before the row wraps. */
+  .funnel { display: flex; align-items: stretch; gap: 7px; flex-wrap: wrap; margin: 16px 0; }
   .funnel-step {
-    flex: 1 1 130px; background: var(--card); border: 1px solid var(--line);
-    border-radius: 10px; padding: 16px 18px; min-width: 130px;
+    flex: 1 1 104px; min-width: 104px; background: var(--panel);
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 14px;
   }
-  .funnel-arrow {
-    align-self: center; color: var(--muted); font-size: 20px; line-height: 1;
-    flex: 0 0 auto;
+  .funnel-step .stat-lg { font-size: 28px; }
+  .funnel-step .label { font-size: 10px; letter-spacing: 0.05em; }
+  .funnel-arrow { align-self: center; color: var(--dim); font-size: 15px; flex: 0 0 auto; }
+
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  th {
+    color: var(--muted); font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.07em; font-weight: 600; border-bottom-color: var(--line);
   }
-  @media (max-width: 640px) {
-    .funnel-arrow { display: none; }
-    .funnel-step { flex: 1 1 calc(50% - 10px); }
+  td.c { text-align: center; font-variant-numeric: tabular-nums; }
+  tbody tr:hover { background: var(--panel-2); }
+
+  .pass { color: var(--ok); } .unclear { color: var(--warn); } .fail { color: var(--bad); font-weight: 700; }
+  .o-book { color: var(--ok); } .o-ask_one { color: var(--warn); }
+  .o-decline { color: var(--bad); } .o-review { color: var(--info); }
+  .o-park { color: var(--muted); } .o-complaint { color: var(--plum); }
+  td .o-book, td .o-ask_one, td .o-decline, td .o-review, td .o-park, td .o-complaint,
+  .stat.o-book, .stat.o-ask_one, .stat.o-decline, .stat.o-review, .stat.o-park, .stat.o-complaint {
+    font-weight: 700;
   }
 
   .footnote {
-    color: var(--muted); font-size: 13px; margin-top: 36px; padding-top: 16px;
-    border-top: 1px solid var(--line); max-width: 72ch;
+    color: var(--dim); font-size: 12.5px; margin-top: 34px; padding-top: 16px;
+    border-top: 1px solid var(--line); max-width: 74ch;
   }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-  td.c { text-align: center; font-variant-numeric: tabular-nums; }
-  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; }
-  .pass { color: var(--book); } .unclear { color: var(--ask); } .fail { color: var(--decline); font-weight: 700; }
-  .o-book { color: var(--book); font-weight: 700; }
-  .o-ask_one { color: var(--ask); font-weight: 700; }
-  .o-decline { color: var(--decline); font-weight: 700; }
-  .o-review { color: var(--review); font-weight: 700; }
-  .o-park { color: var(--muted); font-weight: 700; }
-  .o-complaint { color: var(--complaint); font-weight: 700; }
-  .warn { border-left: 3px solid var(--ask); padding-left: 14px; }
-  ul { margin: 0 0 14px; padding-left: 22px; max-width: 68ch; }
-  li { margin-bottom: 6px; }
-  nav {
-    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 36px; font-size: 14px;
+
+  @media (max-width: 860px) {
+    .shell { flex-direction: column; }
+    .side {
+      width: auto; flex: none; height: auto; position: static;
+      flex-direction: row; align-items: center; gap: 14px; overflow-x: auto;
+      border-right: none; border-bottom: 1px solid var(--line); padding: 12px 16px;
+    }
+    .side-foot, .nav-title, .capacity, .brand-sub { display: none; }
+    .nav-group { flex-direction: row; gap: 4px; }
+    main.content { padding: 20px 16px 64px; }
+    .topbar { padding: 14px 16px; }
+    .funnel-arrow { display: none; }
+    .funnel-step { flex: 1 1 calc(50% - 10px); }
   }
-  nav a {
-    text-decoration: none; padding: 7px 13px; border-radius: 999px;
-    border: 1px solid transparent; color: var(--muted);
-  }
-  nav a:hover { border-color: var(--line); color: var(--ink); }
-  footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
 `;
+
+function Icon({ d }: { d: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={d} />
+    </svg>
+  );
+}
+
+const ICONS = {
+  grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  gauge: 'M12 20a8 8 0 1 1 8-8M12 12l4-3',
+  list: 'M8 6h12M8 12h12M8 18h12M3.5 6h.01M3.5 12h.01M3.5 18h.01',
+  pulse: 'M3 12h4l2-7 4 14 2-7h6',
+  code: 'M9 18l-6-6 6-6M15 6l6 6-6 6',
+};
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -113,20 +207,48 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <style dangerouslySetInnerHTML={{ __html: css }} />
       </head>
       <body>
-        <main>
-          <nav>
-            <a href="/">Overview</a>
-            <a href="/dashboard">Nikhil&apos;s dashboard</a>
-            <a href="/results">The 20 calls</a>
-            <a href="/api/health">Health (JSON)</a>
-            <a href="https://github.com/pranuthivedulla/Aangan-Studio">Source</a>
-          </nav>
-          {children}
-          <footer>
-            Coursework build. Every integration is a mock — no call has been taken, no
-            credential exists in this deployment.
-          </footer>
-        </main>
+        <div className="shell">
+          <aside className="side">
+            <div className="brand">
+              <div className="brand-mark">A</div>
+              <div>
+                <div className="brand-name">Aangan Studio</div>
+                <div className="brand-sub">Enquiry agent</div>
+              </div>
+            </div>
+
+            <nav className="nav-group">
+              <div className="nav-title">Studio</div>
+              <a className="nav-item" href="/dashboard"><Icon d={ICONS.gauge} /> Dashboard</a>
+              <a className="nav-item" href="/results"><Icon d={ICONS.list} /> The 20 calls</a>
+              <a className="nav-item" href="/"><Icon d={ICONS.grid} /> How it works</a>
+            </nav>
+
+            <nav className="nav-group">
+              <div className="nav-title">Build</div>
+              <a className="nav-item" href="/api/health"><Icon d={ICONS.pulse} /> Health</a>
+              <a className="nav-item" href="https://github.com/pranuthivedulla/Aangan-Studio"><Icon d={ICONS.code} /> Source</a>
+            </nav>
+
+            <div className="side-foot">
+              <div className="capacity">
+                <div className="label">Build progress</div>
+                <div className="bar"><span style={{ width: '62%' }} /></div>
+                <div className="absent">
+                  Phases 0–4 and 6 done. Call flow, real integrations and hardening to come.
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <div className="main">
+            <header className="topbar">
+              <h2>Aangan Studio — phone enquiry agent</h2>
+              <span className="chip"><span className="dot" /> No calls taken · every integration mocked</span>
+            </header>
+            <main className="content">{children}</main>
+          </div>
+        </div>
       </body>
     </html>
   );
