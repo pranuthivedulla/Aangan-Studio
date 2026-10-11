@@ -30,3 +30,18 @@ Thumbs.db
 # live credentials. It is not part of this repo and must never be committed
 # here. Flagged to the user rather than moved or deleted.
 Desktop/
+
+# Secrets kept as loose notes.
+#
+# A password file was saved into this folder on 11 Oct 2026 and would have
+# been committed to a PUBLIC repository by the next `git add -A`. These
+# patterns stop that happening again, case-insensitively and whatever the
+# extension. They are a safety net, not a filing system: a secret is safer
+# outside the repository altogether.
+*[Pp]assword*
+*[Pp]asswords*
+*[Pp]aasword*
+*[Ss]ecret*
+*[Cc]redential*
+*.key
+*.pem
