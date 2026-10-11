@@ -1,205 +1,145 @@
-import { dashboardData, percentOf, render, type Metric } from '@/dashboard/metrics';
+import { buildAdapters } from '@/adapters';
+import { loadLiveSnapshot } from '@/dashboard/source';
+import { render, type Metric } from '@/dashboard/metrics';
 
 export const dynamic = 'force-static';
 
-function Stat({ label, metric, note }: { label: string; metric: Metric; note?: string }) {
+/**
+ * Box 22 of the components map, and only box 22:
+ * "Vercel dashboard, read-only: funnel, queues, cost, complaint count.
+ *  Fed by 23 and 19."
+ *
+ * Four things, in that order. The September replay lives on /results, where
+ * it belongs — this page is what Nikhil opens to run the studio, not evidence
+ * that the engine works.
+ *
+ * Every number comes through the adapters (acceptance test T22). With mocks
+ * that means an empty dashboard, and an empty dashboard is the honest answer:
+ * no call has been taken. A figure that is absent says why, rather than
+ * showing a zero that would read as failure.
+ */
+
+function Stat({
+  label,
+  metric,
+  hint,
+  big,
+}: {
+  label: string;
+  metric: Metric;
+  hint?: string;
+  big?: boolean;
+}) {
   const absent = metric.value === null;
   return (
-    <div className="card">
-      <div className={absent ? 'stat muted' : 'stat'}>{render(metric)}</div>
+    <div className="card stat-card">
+      <div className={`stat${big ? ' stat-lg' : ''}${absent ? ' muted' : ''}`}>
+        {render(metric)}
+      </div>
       <div className="label">{label}</div>
-      {absent ? (
-        <div className="absent">{metric.absent}</div>
-      ) : note ? (
-        <div className="absent">{note}</div>
-      ) : null}
+      {absent ? <div className="absent">{metric.absent}</div> : hint ? <div className="absent">{hint}</div> : null}
     </div>
   );
 }
 
-export default function Dashboard() {
-  const { september: s, live: l, facts } = dashboardData();
+function FunnelStep({ label, metric, last }: { label: string; metric: Metric; last?: boolean }) {
+  const absent = metric.value === null;
+  return (
+    <>
+      <div className="funnel-step">
+        <div className={`stat stat-lg${absent ? ' muted' : ''}`}>{render(metric)}</div>
+        <div className="label">{label}</div>
+        {absent ? <div className="absent">{metric.absent}</div> : null}
+      </div>
+      {last ? null : <div className="funnel-arrow" aria-hidden="true">→</div>}
+    </>
+  );
+}
 
-  const outOfHoursPct = percentOf(s.outOfHours, s.calls);
-  const reachPct = percentOf(s.reachAnDesigner, s.calls);
-  const humanPct = percentOf(s.needAHuman, s.calls);
-  const borderlinePct = percentOf(s.flaggedBorderline, s.reachAnDesigner);
+export default async function Dashboard() {
+  const live = await loadLiveSnapshot(buildAdapters());
 
   return (
     <>
       <h1>Nikhil&apos;s dashboard</h1>
       <p className="lede">
-        The four questions worth asking every month: how many enquiries became
-        consultations, how fast we replied, what is sitting unanswered, and what it costs
-        per booked consultation.
+        Four questions, answered automatically: how many enquiries became consultations, how
+        fast we replied, what is waiting on someone right now, and what it costs per booked
+        consultation.
       </p>
 
       <div className="card warn">
-        <strong>Read this before you read the numbers.</strong> The system has taken no
-        calls, so everything that needs it to be running is blank and says why. Nothing on
-        this page is estimated or modelled to fill a gap — a dashboard of plausible invented
-        figures is worse than an empty one, because people believe dashboards. The September
-        panel below is real: 20 actual enquiries, replayed through the finished engine.
+        <strong>Nothing has run yet.</strong> This is the view on day one, before the first
+        call. Figures that need the system to be live are blank and say what they are waiting
+        for — none of them is estimated or filled in to look complete, because a dashboard of
+        invented numbers is worse than an empty one. To see the engine working, read{' '}
+        <a href="/results">the twenty September calls</a>.
       </div>
 
-      {/* ------------------------------------------------------------------ */}
-      <h2>Live — since go-live</h2>
-      <p>Nothing has run yet. This is what Nikhil sees on day one, before the first call.</p>
-
-      <h3>The funnel</h3>
-      <div className="grid">
-        <Stat label="Calls taken" metric={l.callsTaken} />
-        <Stat label="Qualified" metric={l.qualified} />
-        <Stat label="Consultations booked" metric={l.booked} />
-        <Stat label="Consultations held" metric={l.consulted} />
-        <Stat label="Won" metric={l.won} />
+      {/* ---------------------------------------------------------------- */}
+      <h2>The funnel</h2>
+      <p>Where enquiries go, from the phone ringing to work won.</p>
+      <div className="funnel">
+        <FunnelStep label="Calls taken" metric={live.callsTaken} />
+        <FunnelStep label="Qualified" metric={live.qualified} />
+        <FunnelStep label="Booked" metric={live.booked} />
+        <FunnelStep label="Consulted" metric={live.consulted} />
+        <FunnelStep label="Won" metric={live.won} last />
       </div>
 
-      <h3>Speed — the thing the whole system exists for</h3>
+      {/* ---------------------------------------------------------------- */}
+      <h2>Speed</h2>
       <p>
-        An enquiry answered within the hour converts about four times better than one
-        answered the next day. Nikhil believes that; he has never been able to check it.
-        Once calls are running, the conversion-by-response-time breakdown below lets him
-        check it himself rather than taking it on faith.
+        The reason the system exists. An enquiry answered within the hour converts about four
+        times better than one answered the next day — and once calls are flowing, these
+        figures let that be checked rather than believed.
       </p>
       <div className="grid">
-        <Stat label="Answered within 5 minutes" metric={l.answeredWithinFiveMinutes} />
-        <Stat label="Answered within 1 hour" metric={l.answeredWithinOneHour} />
-        <Stat label="Answered by the agent, not a person" metric={l.answeredByVaani} />
-      </div>
-      <div className="card">
-        <div className="label">Conversion by response time</div>
-        <p style={{ marginTop: 10, marginBottom: 0 }}>
-          Needs booked consultations with known response times and a won/lost outcome
-          against each. It is the one panel that proves or disproves the 4× claim, so it
-          stays empty until the data is real.
-        </p>
+        <Stat label="Answered within 5 minutes" metric={live.answeredWithinFiveMinutes} />
+        <Stat label="Answered within 1 hour" metric={live.answeredWithinOneHour} />
+        <Stat label="Answered by the agent" metric={live.answeredByVaani} hint="rather than by a person" />
       </div>
 
-      <h3>What is sitting there right now</h3>
+      {/* ---------------------------------------------------------------- */}
+      <h2>Waiting on someone</h2>
+      <p>The queues worth looking at each morning. Anything here is a lead going cold.</p>
       <div className="grid">
-        <Stat label="Unowned leads" metric={l.awaitingAcknowledgement} />
-        <Stat label="Escalated" metric={l.escalated} />
-        <Stat label="Front-desk review backlog" metric={l.frontDeskBacklog} />
-        <Stat label="Complaints" metric={l.complaints} />
+        <Stat label="Unowned leads" metric={live.awaitingAcknowledgement} hint="handed to a designer, not yet acknowledged" />
+        <Stat label="Escalated" metric={live.escalated} hint="past 30 working minutes" />
+        <Stat label="Front-desk review" metric={live.frontDeskBacklog} hint="declines, parks and unclear cases" />
+        <Stat label="Complaints" metric={live.complaints} hint="never routed to Nikhil, only counted here" />
       </div>
 
-      <h3>Cost</h3>
+      {/* ---------------------------------------------------------------- */}
+      <h2>Cost</h2>
       <p>
-        Cost per booked consultation is the headline: it is the number that decides whether
-        this is worth running. It needs real voice minutes and real model usage, so it is
-        blank.
+        Cost per booked consultation is the figure that decides whether this is worth running.
+        It needs real voice minutes and real model usage, so it is blank until calls flow.
       </p>
       <div className="grid">
-        <Stat label="Per call" metric={l.costPerCall} />
-        <Stat label="Per qualified lead" metric={l.costPerQualifiedLead} />
-        <Stat label="Per booked consultation" metric={l.costPerBookedConsultation} />
-        <Stat label="This month, total" metric={l.monthlyCost} />
-        <Stat label="Pipeline value generated" metric={l.pipelineValue} />
+        <Stat label="Per booked consultation" metric={live.costPerBookedConsultation} big />
+        <Stat label="Per call" metric={live.costPerCall} />
+        <Stat label="Per qualified lead" metric={live.costPerQualifiedLead} />
+        <Stat label="This month" metric={live.monthlyCost} />
+        <Stat label="Pipeline value generated" metric={live.pipelineValue} />
       </div>
 
-      <h3>Was forwarding the doubtful ones right?</h3>
+      {/* ---------------------------------------------------------------- */}
+      <h2>Was forwarding the doubtful ones right?</h2>
       <p>
         The system deliberately forwards borderline leads rather than holding them back. That
-        is a bet, and it should be judged on evidence: how many were forwarded, and how many
-        of those turned into work.
+        is a bet, and it should be judged on evidence rather than instinct.
       </p>
       <div className="grid">
-        <Stat label="Forwarded as borderline" metric={l.borderlineForwarded} />
-        <Stat label="Of those, later won" metric={l.borderlineLaterWon} />
+        <Stat label="Forwarded as borderline" metric={live.borderlineForwarded} />
+        <Stat label="Of those, later won" metric={live.borderlineLaterWon} />
       </div>
 
-      {/* ------------------------------------------------------------------ */}
-      <h2>September, replayed through the finished system</h2>
-      <p>
-        These are measured, not projected: 20 real enquiries from the case material, each put
-        through the engine that exists today. It is the closest thing to a forecast that is
-        honest.
-      </p>
-
-      <div className="grid">
-        <Stat label="Enquiries" metric={s.calls} />
-        <Stat label="A person answered" metric={s.answeredByAHuman} />
-        <Stat label="Nobody answered" metric={s.missedEntirely} note="one missed call, 10:47pm" />
-        <Stat label="Outside office hours" metric={outOfHoursPct} />
-        <Stat
-          label="Would now go unanswered"
-          metric={s.wouldGoUnanswered}
-          note="the agent picks up at ring four, at any hour"
-        />
-        <Stat label="Median call length" metric={s.medianCallLengthMin} />
-      </div>
-
-      <h3>Where the 20 would have gone</h3>
-      <div className="grid">
-        <Stat label="Straight to a designer" metric={s.reachAnDesigner} note={`${render(reachPct)} of enquiries`} />
-        <Stat label="Of those, flagged borderline" metric={s.flaggedBorderline} note={`${render(borderlinePct)} of bookings`} />
-        <Stat label="One question asked, then decided" metric={s.oneQuestionAsked} />
-        <Stat label="To a person at the front desk" metric={s.needAHuman} note={`${render(humanPct)} of enquiries`} />
-        <Stat label="Politely declined by the agent" metric={s.declinedByTheAgent} />
-        <Stat label="Waiting on a decision from Nikhil" metric={s.blockedOnADecision} />
-      </div>
-
-      <h3>Two things in this data worth his attention</h3>
-      <p>
-        <strong>Nothing parks.</strong> The rules have five possible outcomes and one never
-        fires. A single failed criterion goes to the front desk, an unclear answer earns one
-        question, and a repeat caller is never held overnight. The &quot;park until
-        tomorrow&quot; queue would sit empty.
-      </p>
-      <p>
-        <strong>Most bookings arrive flagged, for one reason.</strong> Where a booking is
-        marked borderline it is nearly always the same criterion: nobody said who decides.
-        Callers say &quot;we have a 3BHK&quot;; they do not say &quot;I am the owner and I
-        decide&quot;. The rubric handles that correctly — do not push, forward it, note it —
-        but a flag that fires this often stops being a signal.
-      </p>
-
-      <h3>The month, call by call</h3>
-      <div className="scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Call</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Length</th>
-              <th>Outcome</th>
-            </tr>
-          </thead>
-          <tbody>
-            {facts.map((f) => {
-              const row = dashboardData().rows.find((r) => r.id === f.id);
-              return (
-                <tr key={f.id}>
-                  <td>
-                    <code>{f.id}</code>
-                  </td>
-                  <td>{f.dateKey.slice(8)} Sep</td>
-                  <td>
-                    {f.clockTime}
-                    {f.outOfHours ? ' · out of hours' : ''}
-                  </td>
-                  <td>
-                    {f.durationSec === null
-                      ? f.missed
-                        ? 'missed'
-                        : '—'
-                      : `${Math.round(f.durationSec / 60)} min`}
-                  </td>
-                  <td className={`o-${row?.outcome ?? 'review'}`}>
-                    {(row?.outcome ?? '').replace(/_/g, ' ')}
-                    {row?.borderline ? ' (borderline)' : ''}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      <p style={{ marginTop: 28 }}>
-        <a href="/results">See why the engine decided each one →</a>
+      <p className="footnote">
+        Read-only. Figures come from the call log and from what designers record in the CRM —
+        boxes 23 and 19 of the components map — through the same adapters the rest of the
+        system uses. Individual transcripts and the designer&apos;s handoff note are not shown
+        here and are not readable from this page.
       </p>
     </>
   );

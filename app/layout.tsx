@@ -53,7 +53,31 @@ const css = `
   .stat { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
   .label { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; }
   .stat.muted { color: var(--muted); font-weight: 400; }
+  .stat-lg { font-size: 34px; }
   .absent { color: var(--muted); font-size: 12px; margin-top: 6px; line-height: 1.45; }
+  .stat-card { display: flex; flex-direction: column; justify-content: flex-start; }
+
+  /* The funnel reads left to right, and wraps to a column on a phone. */
+  .funnel {
+    display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; margin: 18px 0;
+  }
+  .funnel-step {
+    flex: 1 1 130px; background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 16px 18px; min-width: 130px;
+  }
+  .funnel-arrow {
+    align-self: center; color: var(--muted); font-size: 20px; line-height: 1;
+    flex: 0 0 auto;
+  }
+  @media (max-width: 640px) {
+    .funnel-arrow { display: none; }
+    .funnel-step { flex: 1 1 calc(50% - 10px); }
+  }
+
+  .footnote {
+    color: var(--muted); font-size: 13px; margin-top: 36px; padding-top: 16px;
+    border-top: 1px solid var(--line); max-width: 72ch;
+  }
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
   th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
   th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
@@ -70,7 +94,14 @@ const css = `
   .warn { border-left: 3px solid var(--ask); padding-left: 14px; }
   ul { margin: 0 0 14px; padding-left: 22px; max-width: 68ch; }
   li { margin-bottom: 6px; }
-  nav { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 36px; font-size: 14px; }
+  nav {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 36px; font-size: 14px;
+  }
+  nav a {
+    text-decoration: none; padding: 7px 13px; border-radius: 999px;
+    border: 1px solid transparent; color: var(--muted);
+  }
+  nav a:hover { border-color: var(--line); color: var(--ink); }
   footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
 `;
 

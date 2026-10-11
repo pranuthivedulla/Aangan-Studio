@@ -49,7 +49,7 @@ with the safe default the code runs today. Nothing was silently chosen.
 | 4 | HubSpot handoff, Telegram/Resend alerts, field permissions, privacy | Done |
 | 4b | Deployable web shell: results page, health endpoint, webhook URLs | Done |
 | 5 | Vaani call flow, simulated-call harness | Not started |
-| 6 | Dashboard, funnel metrics, cost reporting | Not started |
+| 6 | Nikhil's dashboard: funnel, queues, cost | Done |
 | 7 | Real integrations, one at a time, behind flags | Not started |
 | 8 | Hardening, retries, idempotency, operational docs | Not started |
 
