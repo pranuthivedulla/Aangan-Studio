@@ -210,12 +210,12 @@ export const OPEN_DECISIONS: readonly OpenDecision[] = [
   {
     id: 'D27',
     question:
-      'Vaani Labs: can the platform call a webhook mid-call and WAIT for a structured JSON reply? Box 12 (offer slots, read back) and the one-question rule both need it.',
+      'Vaani Labs: can the platform call our system mid-call and use the reply to drive what the agent says next? Box 12 (offer slots, read back) and the one-question rule both need it.',
     currentDefault:
-      'ANSWERED: no. Verified 11 Oct 2026 against their published OpenAPI spec at /openapi/v1/vaanivoice.yaml. The webhook event catalogue is call.completed, call.failed, meeting.ended, lead.created, usage.charged and low_balance.warned - there is no mid-call event. Delivery is asynchronous ("a scheduler drains the queue ~once/minute") and the response body steers nothing ("Any 2xx counts as success."). The spec defines no tool, function or custom-action schema, and no field accepts a URL we host.',
+      "ANSWERED: YES, via Custom Tools in the dashboard. The form takes an API Endpoint with a method, Headers, Timeout, Parameters the agent extracts from the conversation, and Store Fields as Variables, which maps our JSON response onto variables the agent speaks. Implemented at /api/vaani/tools/qualify.",
     status: 'ruled',
     ruling:
-      "Answered by the vendor spec, not by the founder's office. The consequence is a product change, not a code change: boxes 12 and 14 of the components map cannot be built as drawn. The agent cannot offer slots or confirm a booking during the call, and the one-question rule cannot be driven by our engine mid-call. See D37 for the options.",
+      "Answered 11 Oct 2026 by signing into the dashboard, and it REVERSES the finding of earlier the same day. Their public OpenAPI spec documents only session creation and after-the-call webhooks, so reading it gave a confident no. The dashboard can do more than the spec describes. Worth remembering as a method failure: a vendor's published spec is evidence of what is documented, not of what exists. Boxes 12 and 14 of the components map survive intact, and the qualification logic stays in tested TypeScript rather than moving into their no-code builder.",
     blocks: null,
   },
   {
@@ -291,18 +291,20 @@ export const OPEN_DECISIONS: readonly OpenDecision[] = [
     question:
       'Vaani masks phone numbers in webhook payloads ("Phone numbers are masked. Defensive-parse - no sub-field is guaranteed."). Phone is our unique client key. How do we recognise a repeat caller?',
     currentDefault:
-      'We cannot, from the webhook alone. Repeat-caller detection and the one-client-record rule (acceptance test T09) have no key to work with. Nothing is built on a guessed field.',
+      "Not from the webhook alone. Vaani's Entities Extraction system tool is a candidate -- its own example is 'My name is John and my number is 9876543210' -- so a number the caller SAYS may be available even when the telephony metadata is masked. Unverified, and a caller who does not say their number still has no key. Nothing is built on a guessed field.",
     status: 'blocking',
     blocks: 'Phase 7 - T09 cannot pass against real events until this is resolved',
   },
   {
     id: 'D37',
     question:
-      'Given D27, how should the call actually work? The map has the agent qualify, offer slots and book inside the call; the platform cannot do that.',
+      'Given D27, how should the call actually work? Call back afterwards, rebuild the logic inside Vaani, or change platform?',
     currentDefault:
-      "Undecided. Three options, in the message to the founder's office of 11 Oct 2026: (a) the agent takes the enquiry and we call back with slots within minutes; (b) the qualification logic is rebuilt inside Vaani's own flow builder, which moves it out of tested TypeScript and breaks \"AI proposes, code decides\"; (c) a different telephony platform that supports mid-call tool calls.",
-    status: 'blocking',
-    blocks: 'Phase 5 - the call flow cannot be written until this is chosen',
+      "Moot, and closed the same day it was raised. D27 turned out to be yes, so none of the three compromises is needed: the agent calls our engine mid-call and reads our answer back. The call flow is the one the map draws.",
+    status: 'ruled',
+    ruling:
+      "Closed 11 Oct 2026. Recorded rather than deleted because the reasoning stands if Vaani ever withdraws Custom Tools: option A, taking the enquiry and calling back within minutes, remains the fallback that preserves every tested decision rule.",
+    blocks: null,
   },
   {
     id: 'D38',

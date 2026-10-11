@@ -7,7 +7,7 @@
  */
 
 import { describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { SIGNATURE_HEADER, signBody, verifySignature } from '@/vaani/signature';
+import { signBody, verifySignature } from '@/vaani/signature';
 import {
   VAANI_EVENT_TYPES,
   extractCallId,

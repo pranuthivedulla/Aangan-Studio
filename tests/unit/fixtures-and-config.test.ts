@@ -210,11 +210,11 @@ describe('open decisions', () => {
       // while every figure is case material or empty; not harmless the moment
       // real calls flow.
       'D35',
-      // Both opened 11 Oct 2026 by reading Vaani's OpenAPI spec: phone numbers
-      // are masked in their webhooks, so our unique client key is missing; and
-      // with no mid-call hook, the call flow itself has to be redesigned.
+      // Phone numbers are masked in Vaani's webhooks, so our unique client
+      // key is missing. D37 left this list the same day it joined it: the
+      // dashboard turned out to support mid-call tool calls after all, so the
+      // call flow does not need redesigning.
       'D36',
-      'D37',
     ]);
   });
 
