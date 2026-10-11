@@ -57,7 +57,7 @@ Record the caller’s own words for each answer. You will pass those words on, a
 
 ## Calling qualify_enquiry
 
-Once the caller has described the project, call the Qualify Enquiry tool (qualify_enquiry).
+Once the caller has described the project, call the Quaify Enquiry tool (note the spelling: that is the tool name in Vaani).
 Pass what you have heard, and for each answer pass the caller’s actual words alongside it.
 For scope_class, choose the one that fits:
   - full_home: the whole place.
@@ -71,7 +71,7 @@ For scope_class, choose the one that fits:
 Say back whatever the tool returns in agent_reply. Do not add to it and do not soften it.
 Then follow next_action:
   - offer_slots: call the Offer Slots tool.
-  - ask_question: ask the one question it gives you, then call Qualify Enquiry once more with the answer.
+  - ask_question: ask the one question it gives you, then call Quaify Enquiry once more with the answer.
   - close_politely: say the reply and end the call warmly.
   - take_details: take a name and a number, say someone will call back, end warmly.
 Never ask more than one clarifying question in a call.
