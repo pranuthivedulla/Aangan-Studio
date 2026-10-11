@@ -206,11 +206,15 @@ describe('open decisions', () => {
       'D2',
       'D20',
       'D21',
-      'D27',
-      // Added 11 Oct 2026: the map shows no login, and the dashboard is a
-      // public URL. Harmless while every figure is case material or empty;
-      // not harmless the moment real calls flow.
+      // The map shows no login, and the dashboard is a public URL. Harmless
+      // while every figure is case material or empty; not harmless the moment
+      // real calls flow.
       'D35',
+      // Both opened 11 Oct 2026 by reading Vaani's OpenAPI spec: phone numbers
+      // are masked in their webhooks, so our unique client key is missing; and
+      // with no mid-call hook, the call flow itself has to be redesigned.
+      'D36',
+      'D37',
     ]);
   });
 

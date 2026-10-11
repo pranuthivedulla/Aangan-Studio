@@ -209,10 +209,14 @@ export const OPEN_DECISIONS: readonly OpenDecision[] = [
   },
   {
     id: 'D27',
-    question: 'Vaani Labs: can the platform call a webhook mid-call and WAIT for a structured JSON reply that drives the next thing the agent says? Box 12 (offer slots, read back) and the one-question rule both need it.',
-    currentDefault: 'Unknown. The voice adapter supports both a per-turn mode and a post-call-only mode so either answer is buildable. Docs at vaanilabs.in were not reachable; the public listing claims signed webhooks and REST APIs but documents no in-call tool calling.',
-    status: 'blocking',
-    blocks: 'Phase 5 — and the whole in-call design if the answer is no',
+    question:
+      'Vaani Labs: can the platform call a webhook mid-call and WAIT for a structured JSON reply? Box 12 (offer slots, read back) and the one-question rule both need it.',
+    currentDefault:
+      'ANSWERED: no. Verified 11 Oct 2026 against their published OpenAPI spec at /openapi/v1/vaanivoice.yaml. The webhook event catalogue is call.completed, call.failed, meeting.ended, lead.created, usage.charged and low_balance.warned - there is no mid-call event. Delivery is asynchronous ("a scheduler drains the queue ~once/minute") and the response body steers nothing ("Any 2xx counts as success."). The spec defines no tool, function or custom-action schema, and no field accepts a URL we host.',
+    status: 'ruled',
+    ruling:
+      "Answered by the vendor spec, not by the founder's office. The consequence is a product change, not a code change: boxes 12 and 14 of the components map cannot be built as drawn. The agent cannot offer slots or confirm a booking during the call, and the one-question rule cannot be driven by our engine mid-call. See D37 for the options.",
+    blocks: null,
   },
   {
     id: 'D28',
@@ -281,6 +285,33 @@ export const OPEN_DECISIONS: readonly OpenDecision[] = [
       'Nothing. The deployed site is public, so anyone with the URL can read the dashboard. Acceptable while every figure is either case material or empty; not acceptable once real call data flows.',
     status: 'blocking',
     blocks: 'Phase 7 — do not point this at live data while the page is open to anyone',
+  },
+  {
+    id: 'D36',
+    question:
+      'Vaani masks phone numbers in webhook payloads ("Phone numbers are masked. Defensive-parse - no sub-field is guaranteed."). Phone is our unique client key. How do we recognise a repeat caller?',
+    currentDefault:
+      'We cannot, from the webhook alone. Repeat-caller detection and the one-client-record rule (acceptance test T09) have no key to work with. Nothing is built on a guessed field.',
+    status: 'blocking',
+    blocks: 'Phase 7 - T09 cannot pass against real events until this is resolved',
+  },
+  {
+    id: 'D37',
+    question:
+      'Given D27, how should the call actually work? The map has the agent qualify, offer slots and book inside the call; the platform cannot do that.',
+    currentDefault:
+      "Undecided. Three options, in the message to the founder's office of 11 Oct 2026: (a) the agent takes the enquiry and we call back with slots within minutes; (b) the qualification logic is rebuilt inside Vaani's own flow builder, which moves it out of tested TypeScript and breaks \"AI proposes, code decides\"; (c) a different telephony platform that supports mid-call tool calls.",
+    status: 'blocking',
+    blocks: 'Phase 5 - the call flow cannot be written until this is chosen',
+  },
+  {
+    id: 'D38',
+    question:
+      "Vaani's public API has no telephony: no SIP, no phone-number and no ring-forwarding endpoints. Their quick start says \"Configure your Twilio number\". Who owns the studio line and the four-ring rule?",
+    currentDefault:
+      'Twilio, by elimination. Non-negotiable 11 (ring the front desk first, Vaani picks up after four unanswered rings) is therefore a Twilio conditional-forwarding setting, not a Vaani one, and needs a Twilio account nobody has mentioned.',
+    status: 'open',
+    blocks: null,
   },
 ] as const;
 
