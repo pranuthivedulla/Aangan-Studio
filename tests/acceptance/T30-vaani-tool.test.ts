@@ -6,7 +6,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { ToolRequestSchema } from '@/vaani/tool-contract';
+import { ToolRequestSchema, normaliseToolBody } from '@/vaani/tool-contract';
 import { SayLeakError, qualifyForCall, toExtraction } from '@/vaani/qualify';
 import { DEFAULT_SETTINGS } from '@config/settings-schema';
 import { containsNoPriceFigure, containsNoPriceLanguage } from '@config/price-language';
@@ -172,5 +172,45 @@ describe('a caller never hears a dead end', () => {
 
   it('carries the call id back so the post-call webhook can be matched to it', () => {
     expect(qualifyForCall(request({ call_id: 'abc-123' }), s).reference).toBe('abc-123');
+  });
+});
+
+describe('the form can send flat parameters, which is how Vaani defines them', () => {
+  it('folds timeline + timeline_quote into the shape the engine reads', () => {
+    const body = normaliseToolBody({
+      call_id: 'c1',
+      scope_class: 'full_home',
+      scope: 'full redesign',
+      scope_quote: 'We want to redo the whole thing',
+      location: 'Kothrud',
+      location_quote: 'We have a 3BHK in Kothrud',
+      timeline: 'March',
+      timeline_quote: 'done by March',
+      decision_maker: 'owner',
+      decision_maker_quote: 'myself and my husband',
+      area_sqft: 1400,
+      area_sqft_quote: 'About 1,400 sq ft carpet',
+    });
+    const parsed = ToolRequestSchema.safeParse(body);
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.timeline).toEqual({ value: 'March', quote: 'done by March' });
+      expect(parsed.data.area_sqft.value).toBe('1400');
+      expect(qualifyForCall(parsed.data, s).outcome).toBe('book');
+    }
+  });
+
+  it('leaves a nested body untouched', () => {
+    const nested = { call_id: 'c1', timeline: { value: 'March', quote: 'done by March' } };
+    const parsed = ToolRequestSchema.safeParse(normaliseToolBody(nested));
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(parsed.data.timeline.quote).toBe('done by March');
+  });
+
+  it('a flat value with no quote still cannot pass a criterion', () => {
+    const body = normaliseToolBody({ call_id: 'c1', scope_class: 'full_home', timeline: 'March' });
+    const parsed = ToolRequestSchema.safeParse(body);
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(qualifyForCall(parsed.data, s).outcome).not.toBe('book');
   });
 });

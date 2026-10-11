@@ -71,6 +71,50 @@ export const ToolRequestSchema = z
 
 export type ToolRequest = z.infer<typeof ToolRequestSchema>;
 
+/** The observation fields, used by the flattener below. */
+export const OBSERVED_FIELDS = [
+  'space_type',
+  'area_sqft',
+  'scope',
+  'timeline',
+  'decision_maker',
+  'location',
+  'budget_mentioned',
+] as const;
+
+/**
+ * Accept flat parameters as well as nested ones.
+ *
+ * Vaani's "Add parameter" defines a flat list, so the agent will more
+ * naturally send `timeline` and `timeline_quote` than a nested object. Rather
+ * than force their form into a shape it may not support, fold the flat pairs
+ * into the nested shape the engine reads. A body that already uses nested
+ * objects passes through untouched, so either works and neither is a special
+ * case anyone has to remember.
+ */
+export function normaliseToolBody(body: unknown): unknown {
+  if (typeof body !== 'object' || body === null) return body;
+  const input = { ...(body as Record<string, unknown>) };
+
+  for (const field of OBSERVED_FIELDS) {
+    const quoteKey = `${field}_quote`;
+    const raw = input[field];
+    const hasFlatQuote = quoteKey in input;
+    const isNested = typeof raw === 'object' && raw !== null;
+
+    if (isNested && !hasFlatQuote) continue;
+
+    if (raw !== undefined || hasFlatQuote) {
+      input[field] = {
+        value: typeof raw === 'string' || typeof raw === 'number' ? String(raw) : isNested ? ((raw as Record<string, unknown>)['value'] ?? null) : null,
+        quote: typeof input[quoteKey] === 'string' ? input[quoteKey] : null,
+      };
+    }
+    delete input[quoteKey];
+  }
+  return input;
+}
+
 /**
  * What we send back.
  *

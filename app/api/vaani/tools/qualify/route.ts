@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { timingSafeEqual } from 'node:crypto';
-import { ToolRequestSchema } from '@/vaani/tool-contract';
+import { ToolRequestSchema, normaliseToolBody } from '@/vaani/tool-contract';
 import { SayLeakError, qualifyForCall } from '@/vaani/qualify';
 import { DEFAULT_SETTINGS } from '@config/settings-schema';
 import { log } from '@/logging';
@@ -65,7 +65,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     return handOver('body was not JSON');
   }
 
-  const parsed = ToolRequestSchema.safeParse(body);
+  const parsed = ToolRequestSchema.safeParse(normaliseToolBody(body));
   if (!parsed.success) {
     // The reason names the field, never its contents.
     const first = parsed.error.issues[0];
