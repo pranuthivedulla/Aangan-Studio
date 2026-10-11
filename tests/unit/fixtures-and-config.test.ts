@@ -172,7 +172,11 @@ describe('rota: Nikhil is never a designer and never a backup', () => {
   });
 
   it('has a date with nobody on duty, to exercise the fallback', () => {
-    expect(onDuty('2026-10-14')).toBeNull();
+    // Sunday. The rota is computed per date now, so the no-duty case is a
+    // day the studio is actually shut rather than a gap in a hand-written
+    // list that happened to be in the past.
+    expect(onDuty('2026-10-18')).toBeNull();
+    expect(onDuty('2026-10-17')).not.toBeNull();
   });
 
   it('is clearly labelled seed data', () => {

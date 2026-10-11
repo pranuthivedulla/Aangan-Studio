@@ -11,7 +11,7 @@ import { offerSlotsForCall, speakableSlot } from '@/vaani/slots-tool';
 import { mockAdapters, mockCalendar } from '@/adapters/mocks';
 import { DEFAULT_SETTINGS } from '@config/settings-schema';
 import { containsNoPriceFigure } from '@config/price-language';
-import { DESIGNERS } from '@config/rota';
+import { DESIGNERS, onDuty } from '@config/rota';
 import type { Slot } from '@/types';
 
 const s = DEFAULT_SETTINGS;
@@ -19,6 +19,9 @@ const ist = (d: string, t: string): string => new Date(`${d}T${t}+05:30`).toISOS
 
 /** 2026-10-12 is a Monday and a seeded rota day. */
 const MONDAY_MORNING = ist('2026-10-12', '10:05');
+
+/** Whoever the rota actually puts on that Monday. */
+const ON_DUTY = onDuty('2026-10-12')?.primaryDesignerIds[0] as string;
 
 function adaptersWith(busy?: Record<string, readonly Slot[]>) {
   const base = mockAdapters();
@@ -105,13 +108,13 @@ describe('offering times', () => {
     const busy: Slot = {
       startsAt: ist('2026-10-12', '11:00'),
       endsAt: ist('2026-10-12', '12:00'),
-      designerId: 'd1',
+      designerId: ON_DUTY,
     };
     const r = await offerSlotsForCall({
       callId: 'c1',
       now: MONDAY_MORNING,
       settings: s,
-      adapters: adaptersWith({ d1: [busy] }),
+      adapters: adaptersWith({ [ON_DUTY]: [busy] }),
     });
     for (const slot of r.slots) {
       expect(slot.startsAt).not.toBe(busy.startsAt);
@@ -119,13 +122,60 @@ describe('offering times', () => {
   });
 });
 
+describe('a caller who rings when the studio is shut', () => {
+  it('is offered Monday, not fobbed off with a callback', async () => {
+    // Sunday morning. Nobody is on duty today; Monday is wide open. Found by
+    // running the real endpoint on a Sunday.
+    const r = await offerSlotsForCall({
+      callId: 'c1',
+      now: ist('2026-10-11', '11:00'),
+      settings: s,
+      adapters: adaptersWith(),
+    });
+    expect(r.next_action).toBe('confirm_slot');
+    expect(r.slots.length).toBeGreaterThan(0);
+    expect(r.designer_id).not.toBeNull();
+  });
+
+  it('offers nothing earlier than the next opening', async () => {
+    const r = await offerSlotsForCall({
+      callId: 'c1',
+      now: ist('2026-10-11', '11:00'),
+      settings: s,
+      adapters: adaptersWith(),
+    });
+    for (const slot of r.slots) {
+      expect(new Date(slot.startsAt).getTime()).toBeGreaterThanOrEqual(
+        new Date(ist('2026-10-12', '10:00')).getTime(),
+      );
+    }
+  });
+
+  it('a 3am caller is offered the same morning', async () => {
+    const r = await offerSlotsForCall({
+      callId: 'c1',
+      now: ist('2026-10-12', '03:00'),
+      settings: s,
+      adapters: adaptersWith(),
+    });
+    expect(r.next_action).toBe('confirm_slot');
+    expect(r.slots[0]?.speakable).toContain('today');
+  });
+});
+
 describe('T11 there is always a human path', () => {
   it('nobody on the rota: the caller is called back, not turned away', async () => {
     const r = await offerSlotsForCall({
       callId: 'c1',
-      // 14 Oct has nobody on duty in the seeded rota.
-      now: ist('2026-10-14', '11:00'),
-      settings: s,
+      // Every day inside the search window is a holiday, so there is no
+      // next opening to assign from at all.
+      now: ist('2026-10-12', '11:00'),
+      settings: {
+        ...s,
+        HOLIDAYS: Array.from({ length: 420 }, (_, i) =>
+          new Date(Date.UTC(2026, 9, 12) + i * 86_400_000).toISOString().slice(0, 10),
+        ),
+      },
       adapters: adaptersWith(),
     });
     expect(r.next_action).toBe('take_details');
@@ -137,20 +187,20 @@ describe('T11 there is always a human path', () => {
     const fullWeek: Slot[] = [];
     for (let d = 12; d <= 24; d++) {
       const day = `2026-10-${String(d).padStart(2, '0')}`;
-      fullWeek.push({ startsAt: ist(day, '10:00'), endsAt: ist(day, '19:00'), designerId: 'd1' });
+      fullWeek.push({ startsAt: ist(day, '10:00'), endsAt: ist(day, '19:00'), designerId: ON_DUTY });
     }
     const r = await offerSlotsForCall({
       callId: 'c1',
       now: MONDAY_MORNING,
       settings: s,
-      adapters: adaptersWith({ d1: fullWeek }),
+      adapters: adaptersWith({ [ON_DUTY]: fullWeek }),
     });
     expect(r.next_action).toBe('take_details');
     expect(r.say.toLowerCase()).toContain('call you back');
   });
 
   it('every spoken line is a complete sentence a person could say', async () => {
-    for (const now of [MONDAY_MORNING, ist('2026-10-14', '11:00')]) {
+    for (const now of [MONDAY_MORNING, ist('2026-10-11', '11:00')]) {
       const r = await offerSlotsForCall({ callId: 'c1', now, settings: s, adapters: adaptersWith() });
       expect(r.say).toMatch(/[.?]$/);
       expect(r.say.length).toBeGreaterThan(30);

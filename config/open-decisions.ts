@@ -315,6 +315,15 @@ export const OPEN_DECISIONS: readonly OpenDecision[] = [
     status: 'open',
     blocks: null,
   },
+  {
+    id: 'D39',
+    question:
+      "Section 6 makes the calendar invite the caller's only written confirmation, which means spelling an email address down a phone line. Is that acceptable, or should confirmation go by SMS or WhatsApp instead?",
+    currentDefault:
+      "Booking does not depend on it. An address that does not parse unambiguously is treated as absent rather than guessed at, the booking still happens, and the agent says a person will confirm. A mis-heard address would send a stranger a client's consultation details, so silently correcting what we thought we heard is worse than having nothing.",
+    status: 'open',
+    blocks: null,
+  },
 ] as const;
 
 export function decisionById(id: string): OpenDecision {

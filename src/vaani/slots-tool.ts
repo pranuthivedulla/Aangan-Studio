@@ -23,7 +23,7 @@ import type { Slot } from '@/types';
 import { assign } from '@/pipeline/assign';
 import { offerSlots } from '@/pipeline/slots';
 import { designerById } from '@config/rota';
-import { __internals } from '@/time/working-clock';
+import { __internals, nextOpening } from '@/time/working-clock';
 
 const { toWall } = __internals;
 
@@ -96,7 +96,27 @@ export async function offerSlotsForCall(args: {
   loadToday?: Readonly<Record<string, number>>;
 }): Promise<SlotsResponse> {
   const { callId, now, settings, adapters } = args;
-  const dateKey = toWall(now).dateKey;
+
+  // Assign from the day the consultation could actually happen, not from
+  // today. A live run on a Sunday found this: the studio is shut, assign()
+  // returned nobody, and the caller was fobbed off with a callback while
+  // Monday sat completely free. An out-of-hours caller is the whole reason
+  // this system exists, so they get Monday's duty designer and Monday's
+  // diary.
+  let dateKey: string;
+  try {
+    dateKey = toWall(nextOpening(now, settings)).dateKey;
+  } catch {
+    // Settings have closed the studio for longer than the clock will search.
+    // A caller is on the line, so this degrades rather than throwing.
+    return {
+      say: 'Let me take your details and someone from the studio will call you back to fix a time.',
+      next_action: 'take_details',
+      slots: [],
+      designer_id: null,
+      reference: callId,
+    };
+  }
 
   const assignment = assign(
     args.loadToday === undefined ? { dateKey } : { dateKey, loadToday: args.loadToday },

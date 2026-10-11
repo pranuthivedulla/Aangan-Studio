@@ -17,7 +17,7 @@
  */
 
 import type { CalendarAdapter } from '@/adapters/types';
-import type { Lead, Slot } from '@/types';
+import type { Slot } from '@/types';
 import type { Settings } from '@config/settings-schema';
 import {
   addWorkingMinutes,
@@ -169,13 +169,18 @@ export interface BookSlotResult {
  */
 export async function bookSlot(args: {
   slot: Slot;
-  lead: Lead;
+  /**
+   * What makes this booking unique. The lead id in the batch path, the call
+   * id mid-call. It was a whole Lead before, of which only the id was ever
+   * read, so every caller faked one to satisfy the signature.
+   */
+  reference: string;
   designerEmail: string;
   clientEmail: string | null;
   calendar: CalendarAdapter;
   settings: Settings;
 }): Promise<BookSlotResult> {
-  const { slot, lead, calendar, settings } = args;
+  const { slot, reference, calendar, settings } = args;
 
   const busy = await calendar.freeBusy(slot.designerId, slot.startsAt, slot.endsAt);
   if (busy.some((b) => overlaps(slot, b, settings.SLOT_BUFFER_MIN))) {
@@ -189,7 +194,7 @@ export async function bookSlot(args: {
     summary: 'Aangan Studio design consultation',
     description: 'Consultation booked from a phone enquiry. Details on the CRM record.',
     // Same lead and same slot must never create two events (T17).
-    idempotencyKey: `book:${lead.id}:${slot.startsAt}`,
+    idempotencyKey: `book:${reference}:${slot.startsAt}`,
   });
 
   if (created === null) {

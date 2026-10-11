@@ -18,36 +18,41 @@ import {
 } from '@/jobs/escalation';
 import { mockCalendar, mockEmail, mockNotify, mockStore } from '@/adapters/mocks';
 import { DEFAULT_SETTINGS, type Settings } from '@config/settings-schema';
-import { DESIGNERS, FRONT_DESK_LEAD_ID, ROTA } from '@config/rota';
-import type { Lead, Slot } from '@/types';
+import { DESIGNERS, FRONT_DESK_LEAD_ID, ROTA, onDuty } from '@config/rota';
+import type { Slot } from '@/types';
 
 const s: Settings = DEFAULT_SETTINGS;
 const ist = (d: string, t: string): string => new Date(`${d}T${t}+05:30`).toISOString();
 const asIst = (iso: string): string =>
   new Date(new Date(iso).getTime() + 330 * 60_000).toISOString().replace('.000Z', '').replace('T', ' ');
 
-/** 2026-10-12 Monday and 2026-10-13 Tuesday are the seeded rota days. */
+/** 2026-10-12 is a Monday; 2026-10-18 a Sunday, when the studio is shut. */
 const MONDAY = '2026-10-12';
-const NO_ROTA_DAY = '2026-10-14';
+const NO_ROTA_DAY = '2026-10-18';
+
+/** Who the rota actually puts on that Monday, rather than a guessed id. */
+const DUTY = onDuty(MONDAY);
+const FIRST = DUTY?.primaryDesignerIds[0] as string;
+const SECOND = DUTY?.primaryDesignerIds[1] as string;
 
 // ---------------------------------------------------------------------------
 
 describe('T10 assignment is deterministic', () => {
   it('same inputs, same designer, every time', () => {
     const runs = Array.from({ length: 50 }, () =>
-      assign({ dateKey: MONDAY, loadToday: { d1: 2, d2: 2 } }).designerId,
+      assign({ dateKey: MONDAY, loadToday: { [FIRST]: 2, [SECOND]: 2 } }).designerId,
     );
     expect(new Set(runs).size).toBe(1);
   });
 
   it('picks the designer with the fewest leads today', () => {
-    expect(assign({ dateKey: MONDAY, loadToday: { d1: 3, d2: 1 } }).designerId).toBe('d2');
-    expect(assign({ dateKey: MONDAY, loadToday: { d1: 1, d2: 3 } }).designerId).toBe('d1');
+    expect(assign({ dateKey: MONDAY, loadToday: { [FIRST]: 3, [SECOND]: 1 } }).designerId).toBe(SECOND);
+    expect(assign({ dateKey: MONDAY, loadToday: { [FIRST]: 1, [SECOND]: 3 } }).designerId).toBe(FIRST);
   });
 
   it('breaks a tie by rota order, not by chance', () => {
-    expect(assign({ dateKey: MONDAY, loadToday: { d1: 2, d2: 2 } }).designerId).toBe('d1');
-    expect(assign({ dateKey: MONDAY }).designerId).toBe('d1');
+    expect(assign({ dateKey: MONDAY, loadToday: { [FIRST]: 2, [SECOND]: 2 } }).designerId).toBe(FIRST);
+    expect(assign({ dateKey: MONDAY }).designerId).toBe(FIRST);
   });
 
   it('explains itself in one line', () => {
@@ -79,7 +84,7 @@ describe('T10 Nikhil is never a designer and never a backup', () => {
 
   it('is never chosen, on any rota day, at any load', () => {
     for (const row of ROTA) {
-      for (const load of [{}, { d1: 9, d2: 9, d3: 9, d4: 9 }, { d1: 0 }]) {
+      for (const load of [{}, { d1: 9, d2: 9, d3: 9, d4: 9 }, { d1: 0 }] as const) {
         const result = assign({ dateKey: row.date, loadToday: load });
         expect(result.designerId).not.toBe('nikhil');
         expect(result.backupDesignerId).not.toBe('nikhil');
@@ -212,11 +217,10 @@ describe('offering slots', () => {
 });
 
 describe('T12 booking, and the race', () => {
-  const lead = { id: 'lead-1' } as Lead;
   const slot: Slot = { startsAt: ist(MONDAY, '14:00'), endsAt: ist(MONDAY, '15:00'), designerId: 'd1' };
   const base = {
     slot,
-    lead,
+    reference: 'lead-1',
     designerEmail: 'd1@example.invalid',
     clientEmail: null,
     settings: s,
