@@ -214,3 +214,65 @@ describe('the form can send flat parameters, which is how Vaani defines them', (
     if (parsed.success) expect(qualifyForCall(parsed.data, s).outcome).not.toBe('book');
   });
 });
+
+describe('a form that can only send strings', () => {
+  it('reads "true" as true, so a price question is still deflected', () => {
+    const parsed = ToolRequestSchema.safeParse({ call_id: 'c1', price_asked: 'true' });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.price_asked).toBe(true);
+      expect(qualifyForCall(parsed.data, s).say.startsWith('Pricing depends on the site')).toBe(true);
+    }
+  });
+
+  it.each([
+    ['true', true],
+    ['TRUE', true],
+    ['yes', true],
+    ['1', true],
+    ['false', false],
+    ['no', false],
+    ['', false],
+    ['anything else', false],
+  ])('price_asked %s becomes %s', (given, expected) => {
+    const parsed = ToolRequestSchema.safeParse({ call_id: 'c1', price_asked: given });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(parsed.data.price_asked).toBe(expected);
+  });
+
+  it('reads "1" as one question already asked, so a second is not offered', () => {
+    // Flat fields, so they go through the normaliser exactly as a real
+    // request from Vaani's form would.
+    const parsed = ToolRequestSchema.safeParse(
+      normaliseToolBody({
+        call_id: 'c1',
+        scope_class: 'full_home',
+        scope: 'full redesign',
+        scope_quote: 'We want to redo the whole thing',
+        location: 'Kothrud',
+        location_quote: 'We have a 3BHK in Kothrud',
+        questions_asked: '1',
+      }),
+    );
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.questions_asked).toBe(1);
+      expect(qualifyForCall(parsed.data, s).next_action).not.toBe('ask_question');
+    }
+  });
+
+  it('treats nonsense in the counter as nought rather than refusing the call', () => {
+    const parsed = ToolRequestSchema.safeParse({ call_id: 'c1', questions_asked: 'none yet' });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(parsed.data.questions_asked).toBe(0);
+  });
+
+  it('still accepts the real types, so nothing breaks if the form improves', () => {
+    const parsed = ToolRequestSchema.safeParse({ call_id: 'c1', price_asked: true, questions_asked: 2 });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.price_asked).toBe(true);
+      expect(parsed.data.questions_asked).toBe(2);
+    }
+  });
+});

@@ -61,10 +61,27 @@ export const ToolRequestSchema = z
      * desk, however complete the answers were.
      */
     scope_class: z.enum(MODEL_SCOPE_CLASSES).default('unclear'),
-    /** True once the caller has asked about price, at any point. */
-    price_asked: z.boolean().default(false),
+    /**
+     * True once the caller has asked about price, at any point.
+     *
+     * Accepts the string "true" as well as a real boolean. Vaani's tool form
+     * would not save with non-string parameter types, so every field is
+     * declared a string there and coerced here. Being strict about the wire
+     * type would mean a caller hearing "someone will call you back" because
+     * a form sent "true" instead of true.
+     */
+    price_asked: z
+      .union([z.boolean(), z.string()])
+      .default(false)
+      .transform((v) => (typeof v === 'boolean' ? v : /^(true|yes|1)$/i.test(v.trim()))),
     /** How many clarifying questions the agent has already asked. */
-    questions_asked: z.number().int().min(0).default(0),
+    questions_asked: z
+      .union([z.number(), z.string()])
+      .default(0)
+      .transform((v) => {
+        const n = typeof v === 'number' ? v : Number.parseInt(v.trim(), 10);
+        return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
+      }),
     language: z.string().nullable().default(null),
   })
   .strict();
