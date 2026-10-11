@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run typecheck && npm run lint && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "smoke": "node scripts/smoke-vaani-tools.mjs"
   },
   "dependencies": {
     "next": "^16.4.0",
