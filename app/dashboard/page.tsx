@@ -1,5 +1,5 @@
 import { buildAdapters } from '@/adapters';
-import { loadLiveSnapshot } from '@/dashboard/source';
+import { ACTIVITY_EXAMPLES, loadLiveSnapshot, loadRecentActivity } from '@/dashboard/source';
 import { render, type Metric } from '@/dashboard/metrics';
 
 export const dynamic = 'force-static';
@@ -57,7 +57,9 @@ function FunnelStep({ label, metric, last }: { label: string; metric: Metric; la
 }
 
 export default async function Dashboard() {
-  const live = await loadLiveSnapshot(buildAdapters());
+  const adapters = buildAdapters();
+  const live = await loadLiveSnapshot(adapters);
+  const activity = await loadRecentActivity(adapters);
 
   return (
     <>
@@ -103,11 +105,52 @@ export default async function Dashboard() {
       {/* ---------------------------------------------------------------- */}
       <h2>Waiting on someone</h2>
       <p>The queues worth looking at each morning. Anything here is a lead going cold.</p>
-      <div className="grid">
-        <Stat label="Unowned leads" metric={live.awaitingAcknowledgement} hint="handed to a designer, not yet acknowledged" />
-        <Stat label="Escalated" metric={live.escalated} hint="past 30 working minutes" />
-        <Stat label="Front-desk review" metric={live.frontDeskBacklog} hint="declines, parks and unclear cases" />
-        <Stat label="Complaints" metric={live.complaints} hint="never routed to Nikhil, only counted here" />
+      <div className="cols">
+        <div>
+          <div className="grid">
+            <Stat label="Unowned leads" metric={live.awaitingAcknowledgement} hint="handed to a designer, not yet acknowledged" />
+            <Stat label="Escalated" metric={live.escalated} hint="past 30 working minutes" />
+            <Stat label="Front-desk review" metric={live.frontDeskBacklog} hint="declines, parks and unclear cases" />
+            <Stat label="Complaints" metric={live.complaints} hint="never routed to Nikhil, only counted here" />
+          </div>
+        </div>
+
+        <aside className="card feed">
+          <div className="feed-head">
+            <strong>Recent activity</strong>
+            <span className="absent" style={{ margin: 0 }}>{activity.length === 0 ? 'nothing yet' : `last ${activity.length}`}</span>
+          </div>
+
+          {activity.length === 0 ? (
+            <>
+              <p className="absent" style={{ marginTop: 10 }}>
+                This fills as calls arrive. It records what happened and when — never who,
+                because an entry naming a caller would hand over exactly the per-person view
+                this dashboard withholds.
+              </p>
+              <ul className="feed-list">
+                {ACTIVITY_EXAMPLES.map((example) => (
+                  <li key={example} className="feed-item ghost">
+                    <span className="feed-dot" />
+                    <span>{example}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <ul className="feed-list">
+              {activity.map((item) => (
+                <li key={`${item.at}-${item.text}`} className="feed-item">
+                  <span className="feed-dot live" />
+                  <span>
+                    {item.text}
+                    <span className="feed-when">{item.at.slice(11, 16)}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </aside>
       </div>
 
       {/* ---------------------------------------------------------------- */}

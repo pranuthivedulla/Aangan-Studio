@@ -10,7 +10,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { loadLiveSnapshot } from '@/dashboard/source';
+import { loadLiveSnapshot, loadRecentActivity } from '@/dashboard/source';
 import { buildAdapters, mockAdapters, mockCrm, mockStore } from '@/adapters';
 import { render } from '@/dashboard/metrics';
 import type { Lead } from '@/types';
@@ -94,5 +94,62 @@ describe('absent is not zero', () => {
     const live = await loadLiveSnapshot(mockAdapters());
     expect(live.won.value).toBeNull();
     expect(live.won.absent).toContain('HubSpot');
+  });
+});
+
+describe('the activity feed records what happened, never who', () => {
+  it('is empty before anything runs', async () => {
+    expect(await loadRecentActivity(mockAdapters())).toEqual([]);
+  });
+
+  it('records a booking, a handoff and an escalation', async () => {
+    const store = mockStore();
+    await store.saveLead(lead({ id: 'a', state: 'booked', updatedAt: '2026-10-12T10:00:00.000Z' }));
+    await store.saveLead(lead({ id: 'b', state: 'handed_off', updatedAt: '2026-10-12T11:00:00.000Z' }));
+    await store.saveLead(lead({ id: 'c', state: 'escalated', updatedAt: '2026-10-12T12:00:00.000Z' }));
+
+    const feed = await loadRecentActivity({ ...mockAdapters(), store, crm: mockCrm() });
+    expect(feed).toHaveLength(3);
+    // Newest first.
+    expect(feed[0]?.kind).toBe('escalated');
+    expect(feed[2]?.kind).toBe('booked');
+  });
+
+  it('names a complaint without naming the complainer', async () => {
+    const store = mockStore();
+    await store.saveLead(lead({ id: 'a', intent: 'complaint', state: 'review' }));
+    const feed = await loadRecentActivity({ ...mockAdapters(), store, crm: mockCrm() });
+    expect(feed[0]?.kind).toBe('complaint');
+    expect(feed[0]?.text).toBe('A complaint reached the front desk');
+  });
+
+  it('carries no caller detail at all', async () => {
+    const store = mockStore();
+    await store.saveLead(
+      lead({ id: 'a', state: 'booked', clientId: '+919876543210', assignedDesignerId: 'd1' }),
+    );
+    const feed = await loadRecentActivity({ ...mockAdapters(), store, crm: mockCrm() });
+    const text = JSON.stringify(feed);
+    expect(text).not.toContain('+919876543210');
+    expect(text).not.toContain('d1');
+  });
+
+  it('logs a settings change by key, never by value', async () => {
+    const store = mockStore();
+    await store.writeSetting({ key: 'SLOT_COUNT_OFFERED', value: 2, changedBy: 'nikhil' });
+    const feed = await loadRecentActivity({ ...mockAdapters(), store, crm: mockCrm() });
+    expect(feed[0]?.text).toContain('SLOT_COUNT_OFFERED');
+    expect(feed[0]?.text).toContain('nikhil');
+    // One of these settings is the spoken price sentence. The feed is not the
+    // place for its contents.
+    expect(feed[0]?.text).not.toContain('2');
+  });
+
+  it('caps the feed, so one busy morning does not fill the page', async () => {
+    const store = mockStore();
+    for (let i = 0; i < 20; i++) {
+      await store.saveLead(lead({ id: `l${i}`, state: 'booked', updatedAt: `2026-10-12T1${i % 10}:00:00.000Z` }));
+    }
+    expect((await loadRecentActivity({ ...mockAdapters(), store, crm: mockCrm() })).length).toBe(8);
   });
 });

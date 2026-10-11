@@ -74,3 +74,78 @@ export async function loadLiveSnapshot(adapters: Adapters): Promise<LiveSnapshot
     borderlineLaterWon: won === null ? missing(NO_CRM) : have(0),
   };
 }
+
+/**
+ * Recent activity (the reference's right-hand feed).
+ *
+ * Derived from lead state and the settings audit, through the adapters like
+ * everything else. It carries NO caller detail — a feed saying "Priya from
+ * Kothrud booked with Seed" would hand Nikhil exactly the per-person view the
+ * visibility matrix withholds. So an entry names what happened and when, and
+ * nothing about who.
+ */
+
+export type ActivityKind =
+  | 'call_taken'
+  | 'qualified'
+  | 'booked'
+  | 'handed_off'
+  | 'acknowledged'
+  | 'escalated'
+  | 'review'
+  | 'complaint'
+  | 'setting_changed';
+
+export interface ActivityItem {
+  readonly at: string;
+  readonly kind: ActivityKind;
+  readonly text: string;
+}
+
+const STATE_ACTIVITY: Partial<Record<Lead['state'], { kind: ActivityKind; text: string }>> = {
+  booked: { kind: 'booked', text: 'A consultation was booked inside the call' },
+  handed_off: { kind: 'handed_off', text: 'A lead was handed to a designer' },
+  acknowledged: { kind: 'acknowledged', text: 'A designer acknowledged a lead' },
+  consulted: { kind: 'acknowledged', text: 'A consultation was held' },
+  escalated: { kind: 'escalated', text: 'A lead went unacknowledged and escalated' },
+  review: { kind: 'review', text: 'A lead went to the front desk' },
+  parked: { kind: 'review', text: 'A lead was parked for the next working day' },
+  declined: { kind: 'review', text: 'An enquiry was politely declined' },
+};
+
+export async function loadRecentActivity(
+  adapters: Adapters,
+  limit = 8,
+): Promise<readonly ActivityItem[]> {
+  const leads = await adapters.store.allLeads();
+  const audit = await adapters.store.settingsAudit();
+
+  const fromLeads: ActivityItem[] = leads.flatMap((lead) => {
+    if (lead.intent === 'complaint') {
+      return [{ at: lead.updatedAt, kind: 'complaint' as const, text: 'A complaint reached the front desk' }];
+    }
+    const entry = STATE_ACTIVITY[lead.state];
+    return entry ? [{ at: lead.updatedAt, kind: entry.kind, text: entry.text }] : [];
+  });
+
+  const fromSettings: ActivityItem[] = audit.map((change) => ({
+    at: change.changedAt,
+    kind: 'setting_changed' as const,
+    // The key, never the value: one of these settings is the spoken price
+    // sentence, and the feed is not the place for it.
+    text: `${change.changedBy} changed ${change.key}`,
+  }));
+
+  return [...fromLeads, ...fromSettings]
+    .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
+    .slice(0, limit);
+}
+
+/** What the feed will show once calls arrive. Used for the empty state. */
+export const ACTIVITY_EXAMPLES: readonly string[] = [
+  'A call was answered after four unanswered rings',
+  'A consultation was booked inside the call',
+  'A lead was handed to a designer',
+  'A lead went unacknowledged and escalated',
+  'A complaint reached the front desk',
+];

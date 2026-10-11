@@ -162,6 +162,29 @@ const css = `
     font-weight: 700;
   }
 
+  /* Queues on the left, activity on the right, as in the reference. */
+  .cols { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr) 300px; align-items: start; margin: 16px 0; }
+  .feed { padding: 15px 17px; }
+  .feed-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .feed-head strong { font-size: 13.5px; }
+  .feed-list { list-style: none; margin: 12px 0 0; padding: 0; }
+  .feed-item {
+    display: flex; gap: 10px; align-items: flex-start; font-size: 13px;
+    color: var(--muted); padding: 8px 0; border-top: 1px solid var(--line-soft);
+  }
+  .feed-item:first-child { border-top: none; }
+  .feed-item.ghost { color: var(--dim); }
+  .feed-dot {
+    width: 6px; height: 6px; border-radius: 99px; background: var(--line);
+    flex: 0 0 6px; margin-top: 7px;
+  }
+  .feed-dot.live { background: var(--accent); }
+  .feed-when { color: var(--dim); font-size: 11.5px; margin-left: 8px; }
+  /* Beside the feed the four queue cards sit as a tidy 2x2; left to its own
+     auto-fit they wrap 3 + 1 and leave a hole next to the fourth. */
+  @media (min-width: 1041px) { .cols .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 1040px) { .cols { grid-template-columns: 1fr; } }
+
   .footnote {
     color: var(--dim); font-size: 12.5px; margin-top: 34px; padding-top: 16px;
     border-top: 1px solid var(--line); max-width: 74ch;
@@ -180,6 +203,17 @@ const css = `
     .topbar { padding: 14px 16px; }
     .funnel-arrow { display: none; }
     .funnel-step { flex: 1 1 calc(50% - 10px); }
+    /* The nav is a scrolling row here; without this "The 20 calls" breaks
+       across three lines and the row grows taller than the page header. */
+    .nav-item { white-space: nowrap; }
+  }
+
+  /* On a phone the title and the status chip cannot share a row: side by side
+     they squeeze the title into a column one word wide. Stack them. */
+  @media (max-width: 640px) {
+    .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .topbar h2 { font-size: 14px; }
+    .chip { font-size: 11.5px; }
   }
 `;
 
