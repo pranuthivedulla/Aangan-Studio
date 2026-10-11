@@ -59,6 +59,15 @@ Record the caller’s own words for each answer. You will pass those words on, a
 
 Once the caller has described the project, call qualify_enquiry.
 Pass what you have heard, and for each answer pass the caller’s actual words alongside it.
+For scope_class, choose the one that fits:
+  - full_home: the whole place.
+  - partial: two or more rooms, or a whole floor.
+  - single_room: one room, done properly.
+  - narrow_scope: only a kitchen, only wardrobes, or similar.
+  - commercial: an office, clinic or studio.
+  - advice_only: they want ideas or an opinion, with no work done.
+  - out_of_service: a restaurant, hotel, shop or gym. Do not judge the location yourself — just report where it is and the system decides.
+  - unclear: you cannot tell yet. Use this rather than guessing.
 Say back whatever the tool returns in agent_reply. Do not add to it and do not soften it.
 Then follow next_action:
   - offer_slots: call the offer_slots tool.

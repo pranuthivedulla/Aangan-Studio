@@ -134,7 +134,17 @@ function scoreBudget(
 export function refineScopeClass(
   modelScope: Extraction['scope_class'],
   areaSqft: number | null,
+  location: string | null = null,
 ): { scopeClass: ScopeClass; blockedBy: string | null } {
+  // Geography is the locality table's job, not the model's and certainly not
+  // the call script's. An excluded place is out of service whatever the model
+  // called the job, which is what keeps a Nashik caller declining rather than
+  // landing on the front desk under the two-fail threshold. Deriving it here
+  // means the service area is written down once.
+  if (resolveArea(location) === 'excluded') {
+    return { scopeClass: 'out_of_service', blockedBy: null };
+  }
+
   if (modelScope !== 'commercial' || areaSqft === null) {
     return { scopeClass: modelScope, blockedBy: null };
   }
@@ -158,7 +168,11 @@ export function score(extraction: Extraction, transcript: string): ScoreResult {
   const verified = verifyEvidence(extraction, transcript);
   const blockedBy = new Set<string>();
 
-  const refined = refineScopeClass(extraction.scope_class, extraction.fields.area_sqft);
+  const refined = refineScopeClass(
+    extraction.scope_class,
+    extraction.fields.area_sqft,
+    extraction.fields.location,
+  );
   if (refined.blockedBy) blockedBy.add(refined.blockedBy);
 
   const scores = CRITERIA.map((criterion): CriterionScore => {

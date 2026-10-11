@@ -86,7 +86,7 @@ means less for the model to get wrong on the first attempt.
 | Parameter | Description to type into Vaani |
 |---|---|
 | `call_id` | The unique id of this call. Always send it. |
-| `scope_class` | What kind of job this is. One of exactly: full_home, partial, single_room, narrow_scope, commercial, advice_only, out_of_service, unclear. Use advice_only if they only want ideas or advice. Use out_of_service for a restaurant, hotel, shop, gym, or anywhere outside Pune. Use unclear if you cannot tell yet. |
+| `scope_class` | One of: full_home, partial, single_room, narrow_scope, commercial, advice_only, out_of_service, unclear. |
 | `scope` | What they want done, in a few words. For example "full redesign" or "kitchen and one bedroom". |
 | `scope_quote` | The caller's own words describing what they want done. Copy them exactly. |
 | `location` | Where the property is. The locality or area name. |
@@ -97,6 +97,10 @@ means less for the model to get wrong on the first attempt.
 | `decision_maker_quote` | The caller's own words about who decides. Copy them exactly. |
 | `price_asked` | true if the caller has asked about cost at any point in this call, otherwise false. |
 | `questions_asked` | How many clarifying questions you have already asked on this call. Start at 0. |
+
+Keep every description SHORT. Vaani rejected the tool when the `scope_class`
+description ran to a few hundred characters, so the guidance on when to use
+each value lives in the agent script instead, where it belongs.
 
 **Store Fields as Variables:**
 

@@ -227,3 +227,32 @@ describe('the result carries everything a human needs', () => {
     expect(s.blockedBy).toEqual(['D2', 'D20']);
   });
 });
+
+describe('geography is the locality table’s job, not the model’s', () => {
+  it('an excluded place is out of service whatever the model called the job', () => {
+    for (const place of ['Nashik', 'Mumbai', 'Talegaon Dabhade', 'Lonavala']) {
+      const refined = refineScopeClass('full_home', 1200, place);
+      expect(refined.scopeClass, place).toBe('out_of_service');
+    }
+  });
+
+  it('so a Nashik caller still declines, rather than landing on the front desk', () => {
+    const s = score(extraction({ fields: { location: 'Nashik' }, scope: 'full_home' }), t01);
+    expect(s.scopeClass).toBe('out_of_service');
+  });
+
+  it('a served locality is left alone', () => {
+    expect(refineScopeClass('full_home', 1200, 'Kothrud').scopeClass).toBe('full_home');
+    expect(refineScopeClass('commercial', 800, 'Baner').scopeClass).toBe('commercial');
+  });
+
+  it('an unlisted Pune locality is not reclassified either', () => {
+    // Kharadi is in Pune but not on services.md's list. Unknown is not
+    // excluded, and must never be treated as such.
+    expect(refineScopeClass('full_home', 1200, 'Kharadi').scopeClass).toBe('full_home');
+  });
+
+  it('no location at all changes nothing', () => {
+    expect(refineScopeClass('partial', null, null).scopeClass).toBe('partial');
+  });
+});
